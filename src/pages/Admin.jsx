@@ -1,8 +1,14 @@
 import { Typography } from "@mui/material";
 
-const Admin = () => {
+import { AdminTable } from "../components";
+
+const Admin = ({ questions, categories }) => {
   return (
-        <Typography variant="h2">Admin</Typography>
+    <>
+      <Typography variant="h2">Admin</Typography>
+
+      <AdminTable questions={questions} categories={categories} />
+    </>
   );
 };
 

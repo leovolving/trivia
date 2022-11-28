@@ -7,6 +7,15 @@ import "./index.css";
 
 const App = () => {
   const [isAdmin, setAdmin] = useState(true);
+  const [questions] = useState([
+    {
+      question: "What is Sarah's middle name?",
+      category: "g-foo",
+      points: 100,
+      uuid: "foo",
+    },
+  ]);
+  const [categories] = useState([{ label: "general", id: "g-foo" }]);
   const toggleAdmin = () => {
     setAdmin(!isAdmin);
   };
@@ -21,7 +30,11 @@ const App = () => {
           label="Admin mode"
         />
       </Card>
-      {isAdmin ? <Admin /> : <Game />}
+      {isAdmin ? (
+        <Admin questions={questions} categories={categories} />
+      ) : (
+        <Game />
+      )}
     </>
   );
 };
