@@ -7,15 +7,17 @@ import "./index.css";
 
 const App = () => {
   const [isAdmin, setAdmin] = useState(true);
-  const [questions] = useState([
+  const [questions, setQuestions] = useState([
     {
       question: "What is Sarah's middle name?",
       category: "g-foo",
       points: 100,
-      uuid: "foo",
+      id: "foo",
     },
   ]);
-  const [categories] = useState([{ label: "general", id: "g-foo" }]);
+  const [categories, setCategories] = useState([
+    { label: "general", id: "g-foo" },
+  ]);
   const toggleAdmin = () => {
     setAdmin(!isAdmin);
   };
@@ -31,7 +33,12 @@ const App = () => {
         />
       </Card>
       {isAdmin ? (
-        <Admin questions={questions} categories={categories} />
+        <Admin
+          questions={questions}
+          setQuestions={setQuestions}
+          categories={categories}
+          setCategories={setCategories}
+        />
       ) : (
         <Game />
       )}
