@@ -16,3 +16,36 @@
 .game-questions {
     margin-top: 32px;
 }
+
+.game-question {
+    position: relative;
+    text-align: center;
+}
+
+.game-question__answered:after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    content: "\274c";
+    font-size: 50px; 
+    color: #FFF;
+    line-height: 50px;
+    text-align: center;
+}
+
+.question-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.question-modal-card {
+    min-height: 250px;
+    width: 500px;
+    padding: 50px;
+    display: flex;
+    gap: 40px;
+    flex-direction: column;
+}

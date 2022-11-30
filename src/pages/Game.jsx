@@ -4,7 +4,7 @@ import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
 
 import { GameQuestionModal } from "../components";
 
-const Game = ({ categories, questions }) => {
+const Game = ({ categories, questions, setQuestions }) => {
   const [openQuestion, setOpenQuestion] = useState(null);
   const getQuestionsForCategory = (categoryId) => {
     return questions
@@ -22,8 +22,12 @@ const Game = ({ categories, questions }) => {
             <ul className="normalized-ul">
               {getQuestionsForCategory(c.id).map((q) => (
                 <li className="game-questions" key={q.id}>
-                  <Card>
-                    <CardActionArea onClick={() => setOpenQuestion(q.id)}>
+                  <Card className=".game-question">
+                    <CardActionArea
+                      onClick={() => setOpenQuestion(q.id)}
+                      disabled={q.isAnswered}
+                      className={q.isAnswered ? "game-question__answered" : ""}
+                    >
                       <CardContent>{q.points}</CardContent>
                     </CardActionArea>
                   </Card>
@@ -37,6 +41,8 @@ const Game = ({ categories, questions }) => {
         questionId={openQuestion}
         questions={questions}
         onClose={() => setOpenQuestion(null)}
+        setQuestions={setQuestions}
+        categories={categories}
       />
     </>
   );
