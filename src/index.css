@@ -35,13 +35,13 @@
     text-align: center;
 }
 
-.question-modal {
+.modal {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.question-modal-card {
+.modal-card {
     min-height: 250px;
     width: 500px;
     padding: 50px;

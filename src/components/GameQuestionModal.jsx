@@ -18,8 +18,8 @@ const GameQuestionModal = ({
   };
   const category = categories.find((c) => c.id === question.category);
   return (
-    <Modal open onClose={onClose} className="question-modal">
-      <Card className="question-modal-card">
+    <Modal open onClose={onClose} className="modal">
+      <Card className="modal-card">
         <Box
           sx={{
             display: "flex",
