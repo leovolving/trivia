@@ -7,50 +7,8 @@ import "./index.css";
 
 const App = () => {
   const [isAdmin, setAdmin] = useState(true);
-  const [questions, setQuestions] = useState([
-    {
-      question: "What is Sarah's middle name?",
-      category: "g-foo",
-      points: 100,
-      id: "foo",
-    },
-    {
-      question: "Where does Sarah work?",
-      category: "l-foo",
-      points: 200,
-      id: "foo5",
-    },
-    {
-      question: "What is Sarah's dad's name?",
-      category: "p-foo",
-      points: 100,
-      id: "foo4",
-    },
-    {
-      question: "What is Sarah's mom's name?",
-      category: "p-foo",
-      points: 200,
-      id: "foo3",
-    },
-    {
-      question: "What is Sarah's hometown?",
-      category: "l-foo",
-      points: 100,
-      id: "foo2",
-    },
-    {
-      question: "What is Sarah's favorite color?",
-      category: "f-foo",
-      points: 100,
-      id: "foo1",
-    },
-  ]);
-  const [categories, setCategories] = useState([
-    { label: "general", id: "g-foo" },
-    { label: "people", id: "p-foo" },
-    { label: "places", id: "l-foo" },
-    { label: "faves", id: "f-foo" },
-  ]);
+  const [questions, setQuestions] = useState([]);
+  const [categories, setCategories] = useState([]);
   const toggleAdmin = () => {
     setAdmin(!isAdmin);
   };

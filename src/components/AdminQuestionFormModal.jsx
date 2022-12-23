@@ -27,12 +27,14 @@ const AdminQuestionFormModal = ({
   const [inputCategory, setInputCategory] = useState("");
   const [question, setQuestion] = useState("");
   const [points, setPoints] = useState(INITIAL_POINTS);
+  const [answers, setAnswers] = useState([]);
 
   const clearInputs = () => {
     setCategory(null);
     setInputCategory("");
     setQuestion("");
     setPoints(INITIAL_POINTS);
+    setAnswers([]);
   };
 
   const onAutocompleteChange = (_, value, reason) => {
@@ -70,6 +72,12 @@ const AdminQuestionFormModal = ({
     setStateFunction(event.target.value);
   };
 
+  const onMultipleChoiceOptionChange = (answerIndex) => (event) => {
+    const newAnswers = [...answers];
+    newAnswers[answerIndex] = event.target.value;
+    setAnswers(newAnswers);
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
 
@@ -79,6 +87,7 @@ const AdminQuestionFormModal = ({
       id: uuid(),
       createdAt: new Date(),
       isAnswered: false,
+      answers: answers.filter(Boolean),
       category: getOrCreateCategory(),
     };
 
@@ -128,6 +137,27 @@ const AdminQuestionFormModal = ({
               label="Points"
               required
             />
+
+            <div>
+              <h3>Multiple choice options</h3>
+              {answers.map((a, i) => (
+                <TextField
+                  key={i}
+                  size="small"
+                  onChange={onMultipleChoiceOptionChange(i)}
+                  value={a}
+                  label={`option ${i + 1}`}
+                  autoFocus
+                />
+              ))}
+              <TextField
+                key={answers.length}
+                size="small"
+                onChange={onMultipleChoiceOptionChange(answers.length)}
+                value={""}
+                label={`option ${answers.length + 1}`}
+              />
+            </div>
 
             <Button variant="contained" type="submit">
               Add

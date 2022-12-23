@@ -31,6 +31,12 @@ const GameQuestionModal = ({
           <Typography>{question.points} points</Typography>
         </Box>
         <Typography variant="h4">{question.question}</Typography>
+        <Typography variant="h5">Options</Typography>
+        <ul className="question-modal-list">
+          {question.answers.map((a, i) => (
+            <li key={`answer-${i}-${question.id}`}>{a}</li>
+          ))}
+        </ul>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button onClick={setIsAnswered} variant="outlined">
             Mark completed

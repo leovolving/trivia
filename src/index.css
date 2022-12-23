@@ -49,3 +49,7 @@
     gap: 40px;
     flex-direction: column;
 }
+
+.question-modal-list {
+    list-style: lower-alpha;
+}
