@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, FormControlLabel, Switch, Typography } from "@mui/material";
 
 import { Admin, Game } from "./pages";
 
 import "./index.css";
 
+function useStorageState(initialState, formKey, storageType = localStorage) {
+  const existingState = JSON.parse(storageType.getItem(formKey));
+  const [state, setState] = useState(existingState || initialState);
+
+  // Persist all state changes to localStorage
+  useEffect(() => {
+    storageType.setItem(formKey, JSON.stringify(state));
+  }, [state, formKey, storageType]);
+
+  return [state, setState];
+}
+
 const App = () => {
   const [isAdmin, setAdmin] = useState(true);
-  const [questions, setQuestions] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [questions, setQuestions] = useStorageState([], "questions");
+  const [categories, setCategories] = useStorageState([], "categories");
   const toggleAdmin = () => {
     setAdmin(!isAdmin);
   };
