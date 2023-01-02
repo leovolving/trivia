@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Card, FormControlLabel, Switch, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  FormControlLabel,
+  Switch,
+  Typography,
+} from "@mui/material";
 
 import { Admin, Game } from "./pages";
 
@@ -21,19 +27,44 @@ const App = () => {
   const [isAdmin, setAdmin] = useState(true);
   const [questions, setQuestions] = useStorageState([], "questions");
   const [categories, setCategories] = useStorageState([], "categories");
+
   const toggleAdmin = () => {
     setAdmin(!isAdmin);
   };
+
+  const resetGame = () => {
+    const resetWarning =
+      "Resetting game will mark all questions as unanswered. Are you sure?";
+
+    if (!window.confirm(resetWarning)) return null;
+
+    setQuestions(questions.map((q) => ({ ...q, isAnswered: false })));
+  };
+
   return (
     <>
       <Card className="app-card">
         <Typography variant="h1">Let's Get Trivial</Typography>
-        <FormControlLabel
-          control={
-            <Switch checked={isAdmin} onChange={toggleAdmin} color="success" />
-          }
-          label="Admin mode"
-        />
+        <div className="app-card-controls">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isAdmin}
+                onChange={toggleAdmin}
+                color="success"
+              />
+            }
+            label="Admin mode"
+          />
+          <Button
+            type="button"
+            onClick={resetGame}
+            color="error"
+            variant="outlined"
+          >
+            Reset game
+          </Button>
+        </div>
       </Card>
       {isAdmin ? (
         <Admin
