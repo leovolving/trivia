@@ -25,7 +25,6 @@ const Game = ({ categories, questions, setQuestions }) => {
                   <Card className=".game-question">
                     <CardActionArea
                       onClick={() => setOpenQuestion(q.id)}
-                      disabled={q.isAnswered}
                       className={q.isAnswered ? "game-question__answered" : ""}
                     >
                       <CardContent>{q.points}</CardContent>
