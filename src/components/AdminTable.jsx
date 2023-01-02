@@ -14,9 +14,17 @@ import { AdminQuestionFormModal } from ".";
 
 const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
   };
+
+  const deleteQuestion = ({ question, id }) => {
+    const deleteWarning = `Are you sure you want to delete the following question: ${question}`;
+    if (!window.confirm(deleteWarning)) return;
+    setQuestions(questions.filter((q) => q.id !== id));
+  };
+
   return (
     <Paper>
       <Button onClick={toggleModal}>New Question</Button>
@@ -38,7 +46,12 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
               <TableCell>{q.question}</TableCell>
               <TableCell>{q.points}</TableCell>
               <TableCell>
-                <Button variant="contained" color="error" disabled>
+                <Button
+                  variant="contained"
+                  color="error"
+                  type="button"
+                  onClick={() => deleteQuestion(q)}
+                >
                   Delete
                 </Button>
               </TableCell>
