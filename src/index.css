@@ -57,6 +57,7 @@
     flex-direction: column;
 }
 
-.question-modal-list {
+.answer-options-list {
     list-style: lower-alpha;
+    padding-left: 16px;
 }

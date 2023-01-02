@@ -44,6 +44,7 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
           <TableRow>
             <TableCell>Category</TableCell>
             <TableCell>Question</TableCell>
+            <TableCell>Options</TableCell>
             <TableCell>Points</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
@@ -55,6 +56,17 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
                 {categories.find((c) => c.id === q.category).label}
               </TableCell>
               <TableCell>{q.question}</TableCell>
+              <TableCell>
+                {q.answers.length ? (
+                  <ul className="answer-options-list">
+                    {q.answers.map((a) => (
+                      <li>{a}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <i>N/A</i>
+                )}
+              </TableCell>
               <TableCell>{q.points}</TableCell>
               <TableCell>
                 <Button

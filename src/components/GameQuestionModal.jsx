@@ -32,7 +32,7 @@ const GameQuestionModal = ({
         </Box>
         <Typography variant="h4">{question.question}</Typography>
         <Typography variant="h5">Options</Typography>
-        <ul className="question-modal-list">
+        <ul className="answer-options-list">
           {question.answers.map((a, i) => (
             <li key={`answer-${i}-${question.id}`}>{a}</li>
           ))}
