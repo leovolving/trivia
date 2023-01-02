@@ -23,7 +23,13 @@ const Admin = ({ questions, categories, setQuestions, setCategories }) => {
               ))}
             </ul>
           ) : (
-            <i>None added yet!</i>
+            <Typography
+              variant="body2"
+              component="i"
+              sx={{ marginLeft: "16px" }}
+            >
+              None added yet!
+            </Typography>
           )}
         </div>
         <Typography variant="body2" gutterBottom>
