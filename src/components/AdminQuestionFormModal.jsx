@@ -22,12 +22,24 @@ const AdminQuestionFormModal = ({
   setQuestions,
   categories,
   setCategories,
+  editingQuestion,
 }) => {
-  const [category, setCategory] = useState(null);
-  const [inputCategory, setInputCategory] = useState("");
-  const [question, setQuestion] = useState("");
-  const [points, setPoints] = useState(INITIAL_POINTS);
-  const [answers, setAnswers] = useState([]);
+  const isNew = !editingQuestion;
+  const initialCategory = isNew
+    ? null
+    : categories.find((c) => c.id === editingQuestion.category);
+  const currentOrDefault = (valueKey, defaultValue) =>
+    isNew ? defaultValue : editingQuestion[valueKey];
+
+  const [category, setCategory] = useState(initialCategory);
+  const [inputCategory, setInputCategory] = useState(
+    initialCategory?.label || ""
+  );
+  const [question, setQuestion] = useState(currentOrDefault("question", ""));
+  const [points, setPoints] = useState(
+    currentOrDefault("points", INITIAL_POINTS)
+  );
+  const [answers, setAnswers] = useState(currentOrDefault("answers", []));
 
   const clearInputs = () => {
     setCategory(null);
@@ -81,19 +93,37 @@ const AdminQuestionFormModal = ({
   const onSubmit = (e) => {
     e.preventDefault();
 
-    const newQuestion = {
-      question,
-      points: +points,
-      id: uuid(),
-      createdAt: new Date(),
-      isAnswered: false,
-      answers: answers.filter(Boolean),
-      category: getOrCreateCategory(),
-    };
+    if (isNew) {
+      const newQuestion = {
+        question,
+        points: +points,
+        id: uuid(),
+        createdAt: new Date(),
+        isAnswered: false,
+        answers: answers.filter(Boolean),
+        category: getOrCreateCategory(),
+      };
 
-    setQuestions([newQuestion, ...questions]);
-    clearInputs();
+      setQuestions([newQuestion, ...questions]);
+      clearInputs();
+    } else {
+      const updatedQuestions = questions.map((q) =>
+        q.id !== editingQuestion.id
+          ? q
+          : {
+              ...q,
+              question,
+              points: +points,
+              answers: answers.filter(Boolean),
+              category: getOrCreateCategory(),
+            }
+      );
+
+      setQuestions(updatedQuestions);
+      onClose();
+    }
   };
+
   return (
     <Modal open={isOpen} onClose={onClose} className="modal">
       <Card className="modal-card">
@@ -160,7 +190,7 @@ const AdminQuestionFormModal = ({
             </div>
 
             <Button variant="contained" type="submit">
-              Add
+              {isNew ? "Add" : "Save"}
             </Button>
           </form>
         </Box>

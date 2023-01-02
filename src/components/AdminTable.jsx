@@ -14,9 +14,20 @@ import { AdminQuestionFormModal } from ".";
 
 const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState(null);
 
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
+  };
+
+  const closeModal = () => {
+    toggleModal();
+    setEditingQuestion(null);
+  };
+
+  const editQuestion = (q) => {
+    setEditingQuestion(q);
+    toggleModal();
   };
 
   const deleteQuestion = ({ question, id }) => {
@@ -34,7 +45,7 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
             <TableCell>Category</TableCell>
             <TableCell>Question</TableCell>
             <TableCell>Points</TableCell>
-            <TableCell>Action</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -48,6 +59,14 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
               <TableCell>
                 <Button
                   variant="contained"
+                  type="button"
+                  onClick={() => editQuestion(q)}
+                  sx={{ marginRight: "8px" }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
                   color="error"
                   type="button"
                   onClick={() => deleteQuestion(q)}
@@ -59,14 +78,17 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
           ))}
         </TableBody>
       </Table>
-      <AdminQuestionFormModal
-        isOpen={isModalOpen}
-        onClose={toggleModal}
-        questions={questions}
-        setQuestions={setQuestions}
-        categories={categories}
-        setCategories={setCategories}
-      />
+      {isModalOpen && (
+        <AdminQuestionFormModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          questions={questions}
+          setQuestions={setQuestions}
+          categories={categories}
+          setCategories={setCategories}
+          editingQuestion={editingQuestion}
+        />
+      )}
     </Paper>
   );
 };
