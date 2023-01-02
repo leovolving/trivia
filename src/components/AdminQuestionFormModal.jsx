@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import {
   Autocomplete,
-  Box,
   Button,
   Card,
   FormLabel,
