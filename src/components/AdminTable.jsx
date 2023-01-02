@@ -38,7 +38,13 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
 
   return (
     <Paper>
-      <Button onClick={toggleModal}>New Question</Button>
+      <Button
+        onClick={toggleModal}
+        variant="contained"
+        sx={{ margin: "16px 0" }}
+      >
+        + New Question
+      </Button>
       <Table aria-label="game questions">
         <TableHead>
           <TableRow>
@@ -70,7 +76,7 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
               <TableCell>{q.points}</TableCell>
               <TableCell>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   type="button"
                   onClick={() => editQuestion(q)}
                   sx={{ marginRight: "8px" }}
@@ -78,7 +84,6 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
                   Edit
                 </Button>
                 <Button
-                  variant="outlined"
                   color="error"
                   type="button"
                   onClick={() => deleteQuestion(q)}

@@ -7,6 +7,23 @@ const Admin = ({ questions, categories, setQuestions, setCategories }) => {
     <>
       <Typography variant="h2">Admin</Typography>
 
+      <Typography variant="h3">Categories</Typography>
+      {categories.length ? (
+        <ul className="admin-category-list">
+          {categories.map((c) => (
+            <li>
+              <Typography sx={{ fontSize: "20px" }}>{c.label}</Typography>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <i>None added yet!</i>
+      )}
+      <Typography variant="body2" gutterBottom>
+        Categories are added automatically when you add questions.
+      </Typography>
+
+      <Typography variant="h3">Questions</Typography>
       <AdminTable
         questions={questions}
         setQuestions={setQuestions}
