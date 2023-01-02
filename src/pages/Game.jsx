@@ -26,7 +26,9 @@ const Game = ({ categories, questions, setQuestions }) => {
         <ul className="game-board normalized-ul">
           {activeCategories.map((c) => (
             <li key={c.id}>
-              <Typography variant="h3">{c.label}</Typography>
+              <Typography variant="h3" sx={{ textTransform: "capitalize" }}>
+                {c.label}
+              </Typography>
               <ul className="normalized-ul">
                 {getQuestionsForCategory(c.id).map((q) => (
                   <li className="game-questions" key={q.id}>
