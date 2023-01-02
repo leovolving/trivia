@@ -127,30 +127,24 @@ const AdminQuestionFormModal = ({
   return (
     <Modal open={isOpen} onClose={onClose} className="modal">
       <Card className="modal-card">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            borderBottom: "1px solid",
-          }}
-        >
-          <form id="new-question-form" onSubmit={onSubmit}>
-            <FormLabel>
-              Category
-              <Autocomplete
-                freeSolo
-                options={categories}
-                renderInput={(params) => (
-                  <TextField size="small" {...params} required />
-                )}
-                onChange={onAutocompleteChange}
-                inputValue={inputCategory}
-                onInputChange={onAutocompleteChange}
-                value={category}
-                sx={{ marginBottom: "25px" }}
-              />
-            </FormLabel>
+        <form id="new-question-form" onSubmit={onSubmit}>
+          <FormLabel>
+            Category
+            <Autocomplete
+              freeSolo
+              options={categories}
+              renderInput={(params) => (
+                <TextField size="small" {...params} required />
+              )}
+              onChange={onAutocompleteChange}
+              inputValue={inputCategory}
+              onInputChange={onAutocompleteChange}
+              value={category}
+              sx={{ marginBottom: "25px" }}
+            />
+          </FormLabel>
 
+          <div className="question-form-points-container">
             <TextField
               size="small"
               onChange={onTextFieldChange(setQuestion)}
@@ -167,33 +161,35 @@ const AdminQuestionFormModal = ({
               label="Points"
               required
             />
+          </div>
 
-            <div>
-              <h3>Multiple choice options</h3>
-              {answers.map((a, i) => (
-                <TextField
-                  key={i}
-                  size="small"
-                  onChange={onMultipleChoiceOptionChange(i)}
-                  value={a}
-                  label={`option ${i + 1}`}
-                  autoFocus
-                />
-              ))}
+          <div>
+            <h3>Multiple choice options (optional)</h3>
+            {answers.map((a, i) => (
               <TextField
-                key={answers.length}
+                key={i}
                 size="small"
-                onChange={onMultipleChoiceOptionChange(answers.length)}
-                value={""}
-                label={`option ${answers.length + 1}`}
+                onChange={onMultipleChoiceOptionChange(i)}
+                value={a}
+                label={`option ${i + 1}`}
+                autoFocus
+                sx={{ marginRight: "16px", marginBottom: "16px" }}
               />
-            </div>
+            ))}
+            <TextField
+              key={answers.length}
+              size="small"
+              onChange={onMultipleChoiceOptionChange(answers.length)}
+              value={""}
+              label={`option ${answers.length + 1}`}
+              sx={{ marginRight: "16px", marginBottom: "16px" }}
+            />
+          </div>
 
-            <Button variant="contained" type="submit">
-              {isNew ? "Add" : "Save"}
-            </Button>
-          </form>
-        </Box>
+          <Button variant="contained" type="submit" sx={{ marginTop: "24px" }}>
+            {isNew ? "Add" : "Save"}
+          </Button>
+        </form>
       </Card>
     </Modal>
   );

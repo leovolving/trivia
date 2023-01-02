@@ -43,7 +43,7 @@ const App = () => {
 
   return (
     <>
-      <Card className="app-card">
+      <Card className="app-card" raised>
         <Typography variant="h1">Let's Get Trivial</Typography>
         <div className="app-card-controls">
           <FormControlLabel

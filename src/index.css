@@ -1,6 +1,11 @@
+body {
+    padding: 24px;
+}
+
 .app-card {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 32px;
 }
 
 .app-card-controls {
@@ -15,6 +20,10 @@
     list-style-type: none;
 }
 
+.admin-categories-container {
+    display: flex;
+}
+
 .admin-category-list {
     display: flex;
     gap: 12px;
@@ -24,6 +33,19 @@
 .admin-category-list li:not(:last-child) {
     border-right: 2px solid;
     padding-right: 12px;
+}
+
+.question-form-points-container {
+    display: flex;
+    gap: 16px;
+}
+
+.question-form-points-container >:first-child {
+    flex: 1;
+}
+
+.question-form-points-container >:nth-child(2) {
+    width: 100px;
 }
 
 .game-board {
