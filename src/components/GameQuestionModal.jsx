@@ -31,10 +31,15 @@ const GameQuestionModal = ({
           <Typography>{question.points} points</Typography>
         </Box>
         <Typography variant="h4">{question.question}</Typography>
-        <Typography variant="h5">Options</Typography>
         <ul className="answer-options-list">
           {question.answers.map((a, i) => (
-            <li key={`answer-${i}-${question.id}`}>{a}</li>
+            <Typography
+              key={`answer-${i}-${question.id}`}
+              variant="h5"
+              component="li"
+            >
+              {a}
+            </Typography>
           ))}
         </ul>
         <Box sx={{ display: "flex", justifyContent: "center" }}>

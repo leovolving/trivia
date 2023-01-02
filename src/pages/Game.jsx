@@ -19,28 +19,36 @@ const Game = ({ categories, questions, setQuestions }) => {
 
   return (
     <>
-      <Typography variant="h2">Game</Typography>
-      <ul className="game-board normalized-ul">
-        {activeCategories.map((c) => (
-          <li key={c.id}>
-            <Typography variant="h3">{c.label}</Typography>
-            <ul className="normalized-ul">
-              {getQuestionsForCategory(c.id).map((q) => (
-                <li className="game-questions" key={q.id}>
-                  <Card className=".game-question">
-                    <CardActionArea
-                      onClick={() => setOpenQuestion(q.id)}
-                      className={q.isAnswered ? "game-question__answered" : ""}
-                    >
-                      <CardContent>{q.points}</CardContent>
-                    </CardActionArea>
-                  </Card>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <Typography variant="h2" gutterBottom>
+        Game Mode
+      </Typography>
+      <Card sx={{ padding: "16px" }} raised>
+        <ul className="game-board normalized-ul">
+          {activeCategories.map((c) => (
+            <li key={c.id}>
+              <Typography variant="h3">{c.label}</Typography>
+              <ul className="normalized-ul">
+                {getQuestionsForCategory(c.id).map((q) => (
+                  <li className="game-questions" key={q.id}>
+                    <Card className=".game-question">
+                      <CardActionArea
+                        onClick={() => setOpenQuestion(q.id)}
+                        className={
+                          q.isAnswered ? "game-question__answered" : ""
+                        }
+                      >
+                        <CardContent sx={{ textAlign: "center" }}>
+                          <b>{q.points}</b>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </Card>
       <GameQuestionModal
         questionId={openQuestion}
         questions={questions}
