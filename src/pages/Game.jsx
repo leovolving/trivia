@@ -6,6 +6,11 @@ import { GameQuestionModal } from "../components";
 
 const Game = ({ categories, questions, setQuestions }) => {
   const [openQuestion, setOpenQuestion] = useState(null);
+
+  const activeCategories = categories.filter((c) =>
+    questions.some((q) => q.category === c.id)
+  );
+
   const getQuestionsForCategory = (categoryId) => {
     return questions
       .filter((q) => q.category === categoryId)
@@ -16,7 +21,7 @@ const Game = ({ categories, questions, setQuestions }) => {
     <>
       <Typography variant="h2">Game</Typography>
       <ul className="game-board normalized-ul">
-        {categories.map((c) => (
+        {activeCategories.map((c) => (
           <li key={c.id}>
             <Typography variant="h3">{c.label}</Typography>
             <ul className="normalized-ul">

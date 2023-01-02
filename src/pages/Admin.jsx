@@ -20,7 +20,9 @@ const Admin = ({ questions, categories, setQuestions, setCategories }) => {
         <i>None added yet!</i>
       )}
       <Typography variant="body2" gutterBottom>
-        Categories are added automatically when you add questions.
+        Categories are added automatically when you add questions. Categories
+        are only visible in game mode if it has at least 1 question associated
+        with it.
       </Typography>
 
       <Typography variant="h3">Questions</Typography>
