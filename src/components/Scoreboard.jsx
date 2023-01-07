@@ -11,7 +11,6 @@ import {
 
 const Scoreboard = ({ teams, isOpen, onClose }) => {
   const max = Math.max(...teams.map((t) => t.points));
-  console.log({ max });
   return (
     <Modal open={isOpen} onClose={onClose} className="modal">
       <Card className="modal-card">
