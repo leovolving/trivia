@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import {
   Button,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -41,73 +40,72 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
       <Button
         onClick={toggleModal}
         variant="contained"
-        sx={{ margin: "16px 0" }}
+        sx={{ marginBottom: "16px" }}
       >
         + New Question
       </Button>
-      <Paper>
-        <Table aria-label="game questions">
-          <TableHead>
-            <TableRow>
-              <TableCell>Category</TableCell>
-              <TableCell>Question</TableCell>
-              <TableCell>Options</TableCell>
-              <TableCell>Points</TableCell>
-              <TableCell>Actions</TableCell>
+
+      <Table aria-label="game questions">
+        <TableHead>
+          <TableRow>
+            <TableCell>Category</TableCell>
+            <TableCell>Question</TableCell>
+            <TableCell>Options</TableCell>
+            <TableCell>Points</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {questions.map((q) => (
+            <TableRow key={q.id}>
+              <TableCell>
+                {categories.find((c) => c.id === q.category).label}
+              </TableCell>
+              <TableCell>{q.question}</TableCell>
+              <TableCell>
+                {q.answers.length ? (
+                  <ul className="answer-options-list">
+                    {q.answers.map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <i>N/A</i>
+                )}
+              </TableCell>
+              <TableCell>{q.points}</TableCell>
+              <TableCell>
+                <Button
+                  variant="outlined"
+                  type="button"
+                  onClick={() => editQuestion(q)}
+                  sx={{ marginRight: "8px" }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  color="error"
+                  type="button"
+                  onClick={() => deleteQuestion(q)}
+                >
+                  Delete
+                </Button>
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {questions.map((q) => (
-              <TableRow key={q.id}>
-                <TableCell>
-                  {categories.find((c) => c.id === q.category).label}
-                </TableCell>
-                <TableCell>{q.question}</TableCell>
-                <TableCell>
-                  {q.answers.length ? (
-                    <ul className="answer-options-list">
-                      {q.answers.map((a) => (
-                        <li key={a}>{a}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <i>N/A</i>
-                  )}
-                </TableCell>
-                <TableCell>{q.points}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    type="button"
-                    onClick={() => editQuestion(q)}
-                    sx={{ marginRight: "8px" }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    color="error"
-                    type="button"
-                    onClick={() => deleteQuestion(q)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {isModalOpen && (
-          <AdminQuestionFormModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            questions={questions}
-            setQuestions={setQuestions}
-            categories={categories}
-            setCategories={setCategories}
-            editingQuestion={editingQuestion}
-          />
-        )}
-      </Paper>
+          ))}
+        </TableBody>
+      </Table>
+      {isModalOpen && (
+        <AdminQuestionFormModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          questions={questions}
+          setQuestions={setQuestions}
+          categories={categories}
+          setCategories={setCategories}
+          editingQuestion={editingQuestion}
+        />
+      )}
     </>
   );
 };

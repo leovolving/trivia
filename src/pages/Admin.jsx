@@ -52,13 +52,16 @@ const Admin = ({
 
       <Divider variant="middle" sx={{ margin: "32px 0" }} />
 
-      <Typography variant="h3">Questions</Typography>
-      <AdminTable
-        questions={questions}
-        setQuestions={setQuestions}
-        categories={categories}
-        setCategories={setCategories}
-      />
+      <Card sx={{ padding: "16px" }}>
+        <Typography variant="h3">Questions</Typography>
+        <Typography gutterBottom>{questions.length} total</Typography>
+        <AdminTable
+          questions={questions}
+          setQuestions={setQuestions}
+          categories={categories}
+          setCategories={setCategories}
+        />
+      </Card>
     </>
   );
 };
