@@ -1,4 +1,13 @@
-import { Button, Box, Card, Modal, Typography } from "@mui/material";
+import { useState } from "react";
+import {
+  Autocomplete,
+  Button,
+  Box,
+  Card,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 const GameQuestionModal = ({
   questionId,
@@ -6,19 +15,43 @@ const GameQuestionModal = ({
   onClose,
   setQuestions,
   categories,
+  teams,
+  setTeams,
 }) => {
+  const [correctTeams, setCorrectTeams] = useState([]);
   if (!questionId) return null;
+  const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
   const question = questions.find((q) => q.id === questionId);
+
   const setIsAnswered = () => {
     const updatedQuestions = questions.map((q) => ({
       ...q,
       isAnswered: q.id === questionId || !!q.isAnswered,
     }));
+    const updatedTeams = teams.map((t) => {
+      if (correctTeams.findIndex(({ id }) => id === t.id) >= 0) {
+        t.points += question.points;
+      }
+      return t;
+    });
+    setTeams(updatedTeams);
     setQuestions(updatedQuestions);
+    close();
   };
+
   const category = categories.find((c) => c.id === question.category);
+
+  const close = () => {
+    setCorrectTeams([]);
+    onClose();
+  };
+
+  const onAutocompleteChange = (_, value) => {
+    setCorrectTeams(value);
+  };
+
   return (
-    <Modal open onClose={onClose} className="modal">
+    <Modal open onClose={close} className="modal">
       <Card className="modal-card">
         <Box
           sx={{
@@ -42,9 +75,20 @@ const GameQuestionModal = ({
             </Typography>
           ))}
         </ul>
+        <Typography variant="h5">Correct teams</Typography>
+        <Autocomplete
+          options={sortedTeams}
+          getOptionLabel={(o) => o.name}
+          multiple
+          filterSelectedOptions
+          disableCloseOnSelect
+          value={correctTeams}
+          onChange={onAutocompleteChange}
+          renderInput={(params) => <TextField {...params} />}
+        />
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button onClick={setIsAnswered} variant="outlined">
-            Mark completed
+            Complete question and close
           </Button>
         </Box>
       </Card>

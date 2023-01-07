@@ -1,11 +1,18 @@
 import { useState } from "react";
 
-import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography,
+} from "@mui/material";
 
-import { GameQuestionModal } from "../components";
+import { GameQuestionModal, Scoreboard } from "../components";
 
-const Game = ({ categories, questions, setQuestions }) => {
+const Game = ({ categories, questions, setQuestions, teams, setTeams }) => {
   const [openQuestion, setOpenQuestion] = useState(null);
+  const [isScoreboardOpen, setScoreboardOpen] = useState(false);
 
   const activeCategories = categories.filter((c) =>
     questions.some((q) => q.category === c.id)
@@ -19,9 +26,15 @@ const Game = ({ categories, questions, setQuestions }) => {
 
   return (
     <>
-      <Typography variant="h2" gutterBottom>
-        Game Mode
-      </Typography>
+      <Typography variant="h2">Game Mode</Typography>
+      <Button
+        variant="contained"
+        color="success"
+        sx={{ marginBottom: "12px" }}
+        onClick={() => setScoreboardOpen(true)}
+      >
+        Scoreboard
+      </Button>
       <Card sx={{ padding: "16px" }} raised>
         <ul className="game-board normalized-ul">
           {activeCategories.map((c) => (
@@ -57,6 +70,13 @@ const Game = ({ categories, questions, setQuestions }) => {
         onClose={() => setOpenQuestion(null)}
         setQuestions={setQuestions}
         categories={categories}
+        teams={teams}
+        setTeams={setTeams}
+      />
+      <Scoreboard
+        teams={teams}
+        isOpen={isScoreboardOpen}
+        onClose={() => setScoreboardOpen(false)}
       />
     </>
   );
