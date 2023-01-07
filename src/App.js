@@ -27,6 +27,7 @@ const App = () => {
   const [isAdmin, setAdmin] = useState(true);
   const [questions, setQuestions] = useStorageState([], "questions");
   const [categories, setCategories] = useStorageState([], "categories");
+  const [teams, setTeams] = useStorageState([], "teams");
 
   const toggleAdmin = () => {
     setAdmin(!isAdmin);
@@ -34,11 +35,12 @@ const App = () => {
 
   const resetGame = () => {
     const resetWarning =
-      "Resetting game will mark all questions as unanswered. Are you sure?";
+      "Resetting game will mark all questions as unanswered and remove all teams. Are you sure?";
 
     if (!window.confirm(resetWarning)) return null;
 
     setQuestions(questions.map((q) => ({ ...q, isAnswered: false })));
+    setTeams([]);
   };
 
   return (
@@ -72,12 +74,16 @@ const App = () => {
           setQuestions={setQuestions}
           categories={categories}
           setCategories={setCategories}
+          teams={teams}
+          setTeams={setTeams}
         />
       ) : (
         <Game
           questions={questions}
           setQuestions={setQuestions}
           categories={categories}
+          teams={teams}
+          setTeams={setTeams}
         />
       )}
     </>

@@ -67,7 +67,7 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
                   {q.answers.length ? (
                     <ul className="answer-options-list">
                       {q.answers.map((a) => (
-                        <li>{a}</li>
+                        <li key={a}>{a}</li>
                       ))}
                     </ul>
                   ) : (

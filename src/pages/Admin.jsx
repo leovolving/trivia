@@ -1,11 +1,22 @@
 import { Card, Divider, Typography } from "@mui/material";
 
-import { AdminTable } from "../components";
+import { AdminTable, AdminTeamsCard } from "../components";
 
-const Admin = ({ questions, categories, setQuestions, setCategories }) => {
+const Admin = ({
+  questions,
+  categories,
+  setQuestions,
+  setCategories,
+  teams,
+  setTeams,
+}) => {
   return (
     <>
       <Typography variant="h2">Admin Mode</Typography>
+
+      <Divider variant="middle" sx={{ margin: "32px 0" }} />
+
+      <AdminTeamsCard setTeams={setTeams} teams={teams} />
 
       <Divider variant="middle" sx={{ margin: "32px 0" }} />
 
@@ -17,7 +28,7 @@ const Admin = ({ questions, categories, setQuestions, setCategories }) => {
           {categories.length ? (
             <ul className="admin-category-list">
               {categories.map((c) => (
-                <li>
+                <li key={c.id}>
                   <Typography sx={{ fontSize: "20px" }}>{c.label}</Typography>
                 </li>
               ))}
