@@ -21,7 +21,7 @@ const AdminTeamsCard = ({ teams, setTeams }) => {
       id: new Date().getTime() + i,
     }));
 
-    setTeams(addedTeams);
+    setTeams([...teams, ...addedTeams]);
     setTeamInputs([]);
     setAddTeamsModalOpen(false);
   };
