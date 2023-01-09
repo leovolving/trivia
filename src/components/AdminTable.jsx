@@ -56,43 +56,49 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {questions.map((q) => (
-            <TableRow key={q.id}>
-              <TableCell>
-                {categories.find((c) => c.id === q.category).label}
-              </TableCell>
-              <TableCell>{q.question}</TableCell>
-              <TableCell>
-                {q.answers.length ? (
-                  <ul className="answer-options-list">
-                    {q.answers.map((a) => (
-                      <li key={a}>{a}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <i>N/A</i>
-                )}
-              </TableCell>
-              <TableCell>{q.points}</TableCell>
-              <TableCell>
-                <Button
-                  variant="outlined"
-                  type="button"
-                  onClick={() => editQuestion(q)}
-                  sx={{ marginRight: "8px" }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  color="error"
-                  type="button"
-                  onClick={() => deleteQuestion(q)}
-                >
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {[...questions]
+            .sort((a, b) =>
+              a.category === b.category
+                ? a.points - b.points
+                : a.category - b.category
+            )
+            .map((q) => (
+              <TableRow key={q.id}>
+                <TableCell>
+                  {categories.find((c) => c.id === q.category).label}
+                </TableCell>
+                <TableCell>{q.question}</TableCell>
+                <TableCell>
+                  {q.answers.length ? (
+                    <ul className="answer-options-list">
+                      {q.answers.map((a) => (
+                        <li key={a}>{a}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <i>N/A</i>
+                  )}
+                </TableCell>
+                <TableCell>{q.points}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="outlined"
+                    type="button"
+                    onClick={() => editQuestion(q)}
+                    sx={{ marginRight: "8px" }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    color="error"
+                    type="button"
+                    onClick={() => deleteQuestion(q)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
       {isModalOpen && (
