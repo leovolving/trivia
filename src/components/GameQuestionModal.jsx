@@ -85,6 +85,19 @@ const GameQuestionModal = ({
           value={correctTeams}
           onChange={onAutocompleteChange}
           renderInput={(params) => <TextField {...params} />}
+          ListboxProps={{ style: { maxHeight: 100 } }}
+          componentsProps={{
+            popper: {
+              modifiers: [
+                {
+                  name: "flip",
+                  options: {
+                    fallbackPlacements: [],
+                  },
+                },
+              ],
+            },
+          }}
         />
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button onClick={setIsAnswered} variant="outlined">
