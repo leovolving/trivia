@@ -1,0 +1,14 @@
+{
+  "name": "trivia-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Server for a React trivia game, powered by WebSocket",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.5.0"
+  }
+}
