@@ -9,10 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 
+import { endpoint, json, headers } from "../utils";
 import { useAppContext } from "../ContextWrapper";
 
 const GameQuestionModal = ({ questionId, onClose }) => {
-  const { questions, setQuestions, categories, teams, setTeams } =
+  const { questions, setQuestions, categories, teams, setTeams, gameId } =
     useAppContext();
 
   const [correctTeams, setCorrectTeams] = useState([]);
@@ -25,13 +26,25 @@ const GameQuestionModal = ({ questionId, onClose }) => {
       ...q,
       isAnswered: q.id === questionId || !!q.isAnswered,
     }));
-    const updatedTeams = teams.map((t) => {
-      if (correctTeams.findIndex(({ id }) => id === t.id) >= 0) {
-        t.points += question.points;
-      }
-      return t;
+
+    const pointsAwarded = correctTeams.map(({ id }) =>
+      fetch(endpoint("team/add-points"), {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ id, game: gameId, points: question.points }),
+      }).catch(console.error)
+    );
+
+    Promise.all(pointsAwarded).then(() => {
+      const updatedTeams = teams.map((t) => {
+        if (correctTeams.findIndex(({ id }) => id === t.id) >= 0) {
+          t.points += question.points;
+        }
+        return t;
+      });
+      setTeams(updatedTeams);
     });
-    setTeams(updatedTeams);
+
     setQuestions(updatedQuestions);
     close();
   };

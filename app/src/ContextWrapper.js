@@ -20,11 +20,9 @@ const ContextWrapper = ({ children }) => {
     adminGames.map(({ _id }) => _id).includes(gameId)
   );
   const [view, setView] = useState(isAdmin ? VIEWS.admin : VIEWS.game);
-  const getInitial = (key) =>
-    (adminGames.find(({ _id }) => _id === gameId) || {})[key] || [];
-  const [questions, setQuestions] = useState(getInitial("questions"));
-  const [categories, setCategories] = useState(getInitial("categories"));
-  const [teams, setTeams] = useState(getInitial("teams"));
+  const [questions, setQuestions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [teams, setTeams] = useState([]);
 
   const openGame = (id) => {
     return fetch(endpoint(`game/${id}`), { method: "GET" })
@@ -33,7 +31,7 @@ const ContextWrapper = ({ children }) => {
         setGameId(g._id);
         setAdmin(isAdmin);
         setView(VIEWS.admin);
-        setTeams(g.teams);
+        setTeams(g.teams.map(transformId));
         setCategories(g.categories.map(transformId));
         setQuestions(g.questions.map(transformId));
       })

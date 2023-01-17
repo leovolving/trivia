@@ -2,10 +2,11 @@ import { useState } from "react";
 
 import { Button, Card, Modal, TextField, Typography } from "@mui/material";
 
+import { transformId, endpoint, json, headers } from "../utils";
 import { useAppContext } from "../ContextWrapper";
 
 const AdminTeamsCard = () => {
-  const { teams, setTeams } = useAppContext();
+  const { teams, setTeams, gameId } = useAppContext();
 
   const [isAddTeamsModalOpen, setAddTeamsModalOpen] = useState(false);
   const [teamInputs, setTeamInputs] = useState([]);
@@ -18,16 +19,22 @@ const AdminTeamsCard = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const addedTeams = teamInputs.filter(Boolean).map((name, i) => ({
-      name,
-      points: 0,
-      createdAt: new Date(),
-      id: new Date().getTime() + i,
-    }));
+    const addedTeams = teamInputs.filter(Boolean).map((name) =>
+      fetch(endpoint("team/new"), {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ name, game: gameId }),
+      })
+        .then(json)
+        .catch(console.error)
+    );
 
-    setTeams([...teams, ...addedTeams]);
-    setTeamInputs([]);
-    setAddTeamsModalOpen(false);
+    Promise.all(addedTeams).then((res) => {
+      console.log({ res });
+      setTeams([...teams, ...res.map(transformId)]);
+      setTeamInputs([]);
+      setAddTeamsModalOpen(false);
+    });
   };
   return (
     <Card sx={{ padding: "16px" }}>
