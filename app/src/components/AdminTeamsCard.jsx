@@ -30,7 +30,6 @@ const AdminTeamsCard = () => {
     );
 
     Promise.all(addedTeams).then((res) => {
-      console.log({ res });
       setTeams([...teams, ...res.map(transformId)]);
       setTeamInputs([]);
       setAddTeamsModalOpen(false);

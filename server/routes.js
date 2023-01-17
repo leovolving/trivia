@@ -36,7 +36,7 @@ router.post("/question/new", (req, res, next) => {
 router.post("/team/new", (req, res, next) => {
   const { game, name } = req.body;
   Game.findByIdAndUpdate(game, { $push: { teams: { name } } }, { new: true })
-    .then((g) => res.status(201).json(g.teams.slice(-1)))
+    .then((g) => res.status(201).json(g.teams.slice(-1)[0]))
     .catch(next);
 });
 
@@ -56,10 +56,9 @@ router.put("/team/add-points", (req, res, next) => {
     .catch(next);
 });
 
-router.put("/question/answer", (req, res, next) => {
-  const { id, game } = req.body;
+router.put("/game/:id/question/:questionId/answer", (req, res, next) => {
   Game.findOneAndUpdate(
-    { _id: game, "questions._id": id },
+    { _id: req.params.id, "questions._id": req.params.questionId },
     { $set: { "questions.$.isAnswered": true, "questions.$.isActive": false } }
   )
     .then(() => res.status(204).send())

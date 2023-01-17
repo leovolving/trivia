@@ -21,12 +21,7 @@ const GameQuestionModal = ({ questionId, onClose }) => {
   const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
   const question = questions.find((q) => q.id === questionId);
 
-  const setIsAnswered = () => {
-    const updatedQuestions = questions.map((q) => ({
-      ...q,
-      isAnswered: q.id === questionId || !!q.isAnswered,
-    }));
-
+  const setIsAnswered = async () => {
     const pointsAwarded = correctTeams.map(({ id }) =>
       fetch(endpoint("team/add-points"), {
         method: "PUT",
@@ -35,7 +30,7 @@ const GameQuestionModal = ({ questionId, onClose }) => {
       }).catch(console.error)
     );
 
-    Promise.all(pointsAwarded).then(() => {
+    await Promise.all(pointsAwarded).then(() => {
       const updatedTeams = teams.map((t) => {
         if (correctTeams.findIndex(({ id }) => id === t.id) >= 0) {
           t.points += question.points;
@@ -45,8 +40,19 @@ const GameQuestionModal = ({ questionId, onClose }) => {
       setTeams(updatedTeams);
     });
 
-    setQuestions(updatedQuestions);
-    close();
+    fetch(endpoint(`game/${gameId}/question/${question.id}/answer`), {
+      method: "PUT",
+    })
+      .then(() => {
+        const updatedQuestions = questions.map((q) => ({
+          ...q,
+          isAnswered: q.id === questionId || !!q.isAnswered,
+        }));
+
+        setQuestions(updatedQuestions);
+        close();
+      })
+      .catch(console.log);
   };
 
   const category = categories.find((c) => c.id === question.category);
