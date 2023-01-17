@@ -10,10 +10,11 @@ import {
 } from "@mui/material";
 
 import { AdminQuestionFormModal } from ".";
+import { endpoint } from "../utils";
 import { useAppContext } from "../ContextWrapper";
 
 const AdminTable = () => {
-  const { questions, categories, setQuestions } = useAppContext();
+  const { questions, categories, setQuestions, gameId } = useAppContext();
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
@@ -35,7 +36,11 @@ const AdminTable = () => {
   const deleteQuestion = ({ question, id }) => {
     const deleteWarning = `Are you sure you want to delete the following question: ${question}`;
     if (!window.confirm(deleteWarning)) return;
-    setQuestions(questions.filter((q) => q.id !== id));
+    fetch(endpoint(`game/${gameId}/question/${id}`), { method: "DELETE" })
+      .then(() => {
+        setQuestions(questions.filter((q) => q.id !== id));
+      })
+      .catch(console.error);
   };
 
   return (

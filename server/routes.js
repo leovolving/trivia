@@ -66,6 +66,23 @@ router.put("/question/answer", (req, res, next) => {
     .catch(next);
 });
 
+router.put("/question/:id/edit", (req, res, next) => {
+  const { game, question, answers, points, category } = req.body;
+  Game.findOneAndUpdate(
+    { _id: game, "questions._id": req.params.id },
+    {
+      $set: {
+        "questions.$.question": question,
+        "questions.$.answers": answers,
+        "questions.$.points": points,
+        "questions.$.category": category,
+      },
+    }
+  )
+    .then(() => res.status(204).send())
+    .catch(next);
+});
+
 router.put("/game/:id/reset", async (req, res, next) => {
   const game = await Game.findById(req.params.id);
   const teams = game.teams.map((t) => ({
@@ -84,6 +101,15 @@ router.put("/game/:id/reset", async (req, res, next) => {
   )
     .then((g) => res.status(200).send(g))
     .catch(next);
+});
+
+router.delete("/game/:id/question/:questionId", async (req, res, next) => {
+  const game = await Game.findById(req.params.id);
+  game.questions.id(req.params.questionId).remove();
+  game.save((err) => {
+    if (err) return next(err);
+    res.status(204).send();
+  });
 });
 
 module.exports = { router };

@@ -94,16 +94,17 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
   };
 
   const fetchQuestion = async (method) => {
+    const categoryId = await getOrCreateCategory();
     const body = JSON.stringify({
       question,
       points: +points,
       answers: answers.filter(Boolean),
-      category: await getOrCreateCategory(),
+      category: categoryId,
       game: gameId,
     });
     const route = method === "POST" ? "new" : `${editingQuestion.id}/edit`;
     return fetch(endpoint(`question/${route}`), { method, body, headers })
-      .then(json)
+      .then(method === "POST" ? json : () => categoryId)
       .catch(console.error);
   };
 
@@ -111,32 +112,27 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     e.preventDefault();
 
     if (isNew) {
-      const newQuestion = {
-        question,
-        points: +points,
-        answers: answers.filter(Boolean),
-        category: await getOrCreateCategory(),
-      };
-
       fetchQuestion("POST").then((res) => {
-        setQuestions([transformId(newQuestion), ...questions]);
+        setQuestions([transformId(res), ...questions]);
         clearInputs();
       });
     } else {
-      const updatedQuestions = questions.map((q) =>
-        q.id !== editingQuestion.id
-          ? q
-          : {
-              ...q,
-              question,
-              points: +points,
-              answers: answers.filter(Boolean),
-              category: getOrCreateCategory(),
-            }
-      );
+      fetchQuestion("PUT").then((categoryId) => {
+        const updatedQuestions = questions.map((q) =>
+          q.id !== editingQuestion.id
+            ? q
+            : {
+                ...q,
+                question,
+                points: +points,
+                answers: answers.filter(Boolean),
+                category: categoryId,
+              }
+        );
 
-      setQuestions(updatedQuestions);
-      onClose();
+        setQuestions(updatedQuestions);
+        onClose();
+      });
     }
   };
 
