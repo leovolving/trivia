@@ -2,7 +2,11 @@ import { useState } from "react";
 
 import { Button, Card, Modal, TextField, Typography } from "@mui/material";
 
-const AdminTeamsCard = ({ teams, setTeams }) => {
+import { useAppContext } from "../ContextWrapper";
+
+const AdminTeamsCard = () => {
+  const { teams, setTeams } = useAppContext();
+
   const [isAddTeamsModalOpen, setAddTeamsModalOpen] = useState(false);
   const [teamInputs, setTeamInputs] = useState([]);
 

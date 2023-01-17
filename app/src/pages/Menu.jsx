@@ -1,18 +1,13 @@
 import { Button, Card, Divider, Typography } from "@mui/material";
 
 import { endpoint, json } from "../utils";
-const { VIEWS } = "../constants";
+import { VIEWS } from "../constants";
+import { useAppContext } from "../ContextWrapper";
 
-const Menu = ({
-  setAdmin,
-  adminGames,
-  setAdminGames,
-  setGameId,
-  setView,
-  setTeams,
-  setCategories,
-  setQuestions,
-}) => {
+const Menu = () => {
+  const { setAdmin, adminGames, setAdminGames, setGameId, setView, openGame } =
+    useAppContext();
+
   const createNewGame = () => {
     return fetch(endpoint("game/new"), { method: "POST" })
       .then(json)
@@ -21,26 +16,10 @@ const Menu = ({
         setAdminGames([...adminGames, g]);
         setAdmin(true);
         setView(VIEWS.admin);
-        setTeams(g.teams);
-        setCategories(g.categories);
-        setQuestions(g.questions);
       })
       .catch(console.error);
   };
 
-  const openGame = (id) => {
-    return fetch(endpoint(`game/${id}`), { method: "GET" })
-      .then(json)
-      .then((g) => {
-        setGameId(g._id);
-        setAdmin(true);
-        setView(VIEWS.admin);
-        setTeams(g.teams);
-        setCategories(g.categories);
-        setQuestions(g.questions);
-      })
-      .catch(console.error);
-  };
   return (
     <>
       <Typography variant="h2">Menu</Typography>

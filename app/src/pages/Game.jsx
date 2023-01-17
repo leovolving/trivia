@@ -9,8 +9,11 @@ import {
 } from "@mui/material";
 
 import { GameQuestionModal, Scoreboard } from "../components";
+import { useAppContext } from "../ContextWrapper";
 
-const Game = ({ categories, questions, setQuestions, teams, setTeams }) => {
+const Game = () => {
+  const { categories, questions } = useAppContext();
+
   const [openQuestion, setOpenQuestion] = useState(null);
   const [isScoreboardOpen, setScoreboardOpen] = useState(false);
 
@@ -66,15 +69,9 @@ const Game = ({ categories, questions, setQuestions, teams, setTeams }) => {
       </Card>
       <GameQuestionModal
         questionId={openQuestion}
-        questions={questions}
         onClose={() => setOpenQuestion(null)}
-        setQuestions={setQuestions}
-        categories={categories}
-        teams={teams}
-        setTeams={setTeams}
       />
       <Scoreboard
-        teams={teams}
         isOpen={isScoreboardOpen}
         onClose={() => setScoreboardOpen(false)}
       />

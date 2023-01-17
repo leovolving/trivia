@@ -10,22 +10,17 @@ import {
 } from "@mui/material";
 
 import { json, endpoint } from "../utils";
+import { useAppContext } from "../ContextWrapper";
 
 const INITIAL_POINTS = 100;
 
 // to be replaced with proper unique ID when connected to DB
 const uuid = () => new Date().getTime();
 
-const AdminQuestionFormModal = ({
-  isOpen,
-  onClose,
-  questions,
-  setQuestions,
-  categories,
-  setCategories,
-  editingQuestion,
-  gameId,
-}) => {
+const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
+  const { questions, setQuestions, categories, setCategories, gameId } =
+    useAppContext();
+
   const isNew = !editingQuestion;
   const initialCategory = isNew
     ? null

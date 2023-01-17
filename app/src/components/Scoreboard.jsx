@@ -9,7 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 
-const Scoreboard = ({ teams, isOpen, onClose }) => {
+import { useAppContext } from "../ContextWrapper";
+
+const Scoreboard = ({ isOpen, onClose }) => {
+  const { teams } = useAppContext();
+
   const max = Math.max(...teams.map((t) => t.points));
   return (
     <Modal open={isOpen} onClose={onClose} className="modal">

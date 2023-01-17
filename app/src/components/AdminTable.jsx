@@ -10,14 +10,11 @@ import {
 } from "@mui/material";
 
 import { AdminQuestionFormModal } from ".";
+import { useAppContext } from "../ContextWrapper";
 
-const AdminTable = ({
-  questions,
-  categories,
-  setQuestions,
-  setCategories,
-  gameId,
-}) => {
+const AdminTable = () => {
+  const { questions, categories, setQuestions } = useAppContext();
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
 
@@ -111,12 +108,7 @@ const AdminTable = ({
         <AdminQuestionFormModal
           isOpen={isModalOpen}
           onClose={closeModal}
-          questions={questions}
-          setQuestions={setQuestions}
-          categories={categories}
-          setCategories={setCategories}
           editingQuestion={editingQuestion}
-          gameId={gameId}
         />
       )}
     </>

@@ -1,23 +1,17 @@
 import { Card, Divider, Typography } from "@mui/material";
 
 import { AdminTable, AdminTeamsCard } from "../components";
+import { useAppContext } from "../ContextWrapper";
 
-const Admin = ({
-  questions,
-  categories,
-  setQuestions,
-  setCategories,
-  teams,
-  setTeams,
-  gameId,
-}) => {
+const Admin = () => {
+  const { questions, categories } = useAppContext();
   return (
     <>
       <Typography variant="h2">Admin Mode</Typography>
 
       <Divider variant="middle" sx={{ margin: "32px 0" }} />
 
-      <AdminTeamsCard setTeams={setTeams} teams={teams} />
+      <AdminTeamsCard />
 
       <Divider variant="middle" sx={{ margin: "32px 0" }} />
 
@@ -56,13 +50,7 @@ const Admin = ({
       <Card sx={{ padding: "16px" }}>
         <Typography variant="h3">Questions</Typography>
         <Typography gutterBottom>{questions.length} total</Typography>
-        <AdminTable
-          questions={questions}
-          setQuestions={setQuestions}
-          categories={categories}
-          setCategories={setCategories}
-          gameId={gameId}
-        />
+        <AdminTable />
       </Card>
     </>
   );

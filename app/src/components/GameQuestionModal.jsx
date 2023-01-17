@@ -9,15 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 
-const GameQuestionModal = ({
-  questionId,
-  questions,
-  onClose,
-  setQuestions,
-  categories,
-  teams,
-  setTeams,
-}) => {
+import { useAppContext } from "../ContextWrapper";
+
+const GameQuestionModal = ({ questionId, onClose }) => {
+  const { questions, setQuestions, categories, teams, setTeams } =
+    useAppContext();
+
   const [correctTeams, setCorrectTeams] = useState([]);
   if (!questionId) return null;
   const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
