@@ -7,7 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 
-import { Admin, Game } from "./pages";
+import { Admin, Game, Menu } from "./pages";
+
+import { VIEWS } from "./constants";
 
 import "./index.css";
 
@@ -24,13 +26,18 @@ function useStorageState(initialState, formKey, storageType = localStorage) {
 }
 
 const App = () => {
-  const [isAdmin, setAdmin] = useState(true);
+  const [adminGames, setAdminGames] = useStorageState([], "adminGames");
+  const [gameId, setGameId] = useStorageState(null, "gameId");
+  const [isAdmin, setAdmin] = useState(
+    adminGames.map(({ id }) => id).includes(gameId)
+  );
+  const [view, setView] = useState(isAdmin ? VIEWS.admin : VIEWS.game);
   const [questions, setQuestions] = useStorageState([], "questions");
   const [categories, setCategories] = useStorageState([], "categories");
   const [teams, setTeams] = useStorageState([], "teams");
 
   const toggleAdmin = () => {
-    setAdmin(!isAdmin);
+    setView((prev) => (prev === VIEWS.admin ? VIEWS.game : VIEWS.admin));
   };
 
   const resetGame = () => {
@@ -47,43 +54,57 @@ const App = () => {
     <>
       <Card className="app-card" raised>
         <Typography variant="h1">Let's Get Trivial</Typography>
-        <div className="app-card-controls">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isAdmin}
-                onChange={toggleAdmin}
-                color="success"
-              />
-            }
-            label="Admin mode"
-          />
-          <Button
-            type="button"
-            onClick={resetGame}
-            color="error"
-            variant="outlined"
-          >
-            Reset game
-          </Button>
-        </div>
+        {isAdmin && (
+          <div className="app-card-controls">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={view === VIEWS.admin}
+                  onChange={toggleAdmin}
+                  color="success"
+                />
+              }
+              label="Admin mode"
+            />
+            <Button
+              type="button"
+              onClick={resetGame}
+              color="error"
+              variant="outlined"
+            >
+              Reset game
+            </Button>
+          </div>
+        )}
       </Card>
-      {isAdmin ? (
-        <Admin
-          questions={questions}
-          setQuestions={setQuestions}
-          categories={categories}
-          setCategories={setCategories}
-          teams={teams}
-          setTeams={setTeams}
-        />
+      {gameId ? (
+        <>
+          {view === VIEWS.admin ? (
+            <Admin
+              questions={questions}
+              setQuestions={setQuestions}
+              categories={categories}
+              setCategories={setCategories}
+              teams={teams}
+              setTeams={setTeams}
+            />
+          ) : (
+            <Game
+              questions={questions}
+              setQuestions={setQuestions}
+              categories={categories}
+              teams={teams}
+              setTeams={setTeams}
+              setView={setView}
+            />
+          )}
+        </>
       ) : (
-        <Game
-          questions={questions}
-          setQuestions={setQuestions}
-          categories={categories}
-          teams={teams}
-          setTeams={setTeams}
+        <Menu
+          setAdmin={setAdmin}
+          adminGames={adminGames}
+          setAdminGames={setAdminGames}
+          setGameId={setGameId}
         />
       )}
     </>
