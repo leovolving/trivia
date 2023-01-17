@@ -1,5 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+
+const { router } = require("./routes");
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -13,6 +16,9 @@ app.all("*", (req, res, next) => {
   res.set("Access-Control-Allow-Origin", "*");
   next();
 });
+
+app.use(bodyParser.json());
+app.use("/", router);
 
 // health check
 app.get("/hello", (_, res) => {
@@ -32,5 +38,3 @@ try {
 } catch (e) {
   mongoose.disconnect();
 }
-
-module.exports = { app };

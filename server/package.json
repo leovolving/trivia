@@ -5,10 +5,11 @@
   "description": "Server for a React trivia game, powered by WebSocket",
   "main": "index.js",
   "scripts": {
-    "start": "node --trace-deprecation .",
+    "start": "node .",
     "db": "mongod --dbpath ~/data/db"
   },
   "dependencies": {
+    "body-parser": "^1.20.1",
     "express": "^4.18.2",
     "mongoose": "^6.8.3",
     "ws": "^8.5.0"
