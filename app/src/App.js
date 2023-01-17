@@ -10,6 +10,7 @@ import {
 import { Admin, Game, Menu } from "./pages";
 
 import { VIEWS } from "./constants";
+import { endpoint, json } from "./utils";
 
 import "./index.css";
 
@@ -29,12 +30,14 @@ const App = () => {
   const [adminGames, setAdminGames] = useStorageState([], "adminGames");
   const [gameId, setGameId] = useStorageState(null, "gameId");
   const [isAdmin, setAdmin] = useState(
-    adminGames.map(({ id }) => id).includes(gameId)
+    adminGames.map(({ _id }) => _id).includes(gameId)
   );
   const [view, setView] = useState(isAdmin ? VIEWS.admin : VIEWS.game);
-  const [questions, setQuestions] = useStorageState([], "questions");
-  const [categories, setCategories] = useStorageState([], "categories");
-  const [teams, setTeams] = useStorageState([], "teams");
+  const getInitial = (key) =>
+    (adminGames.find(({ _id }) => _id === gameId) || {})[key] || [];
+  const [questions, setQuestions] = useState(getInitial("questions"));
+  const [categories, setCategories] = useState(getInitial("categories"));
+  const [teams, setTeams] = useState(getInitial("teams"));
 
   const toggleAdmin = () => {
     setView((prev) => (prev === VIEWS.admin ? VIEWS.game : VIEWS.admin));
@@ -50,10 +53,34 @@ const App = () => {
     setTeams([]);
   };
 
+  const openMenu = () => {
+    setGameId(null);
+    setAdmin(false);
+  };
+
+  const openGame = (id) => {
+    return fetch(endpoint(`game/${id}`), { method: "GET" })
+      .then(json)
+      .then((g) => {
+        setGameId(g._id);
+        setAdmin(true);
+        setView(VIEWS.admin);
+        setTeams(g.teams);
+        setCategories(g.categories);
+        setQuestions(g.questions);
+      })
+      .catch(console.error);
+  };
+
+  useEffect(() => {
+    if (gameId !== "null") openGame(gameId);
+  }, []);
+
   return (
     <>
       <Card className="app-card" raised>
         <Typography variant="h1">Let's Get Trivial</Typography>
+        <Button onClick={openMenu}>Main menu</Button>
         {isAdmin && (
           <div className="app-card-controls">
             <FormControlLabel
@@ -87,6 +114,7 @@ const App = () => {
               setCategories={setCategories}
               teams={teams}
               setTeams={setTeams}
+              gameId={gameId}
             />
           ) : (
             <Game
@@ -105,6 +133,9 @@ const App = () => {
           adminGames={adminGames}
           setAdminGames={setAdminGames}
           setGameId={setGameId}
+          setQuestions={setQuestions}
+          setCategories={setCategories}
+          setTeams={setTeams}
         />
       )}
     </>

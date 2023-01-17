@@ -14,6 +14,7 @@ app.all("*", (req, res, next) => {
   console.log(`${timestamp} - ${req.method} request for ${req.path}`);
 
   res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Accept");
   next();
 });
 

@@ -18,7 +18,7 @@ router.post("/category/new", (req, res, next) => {
     { $push: { categories: { label } } },
     { new: true }
   )
-    .then((g) => res.status(201).json(g.categories.slice(-1)))
+    .then((g) => res.status(201).json(g.categories.slice(-1)[0]))
     .catch(next);
 });
 
@@ -29,7 +29,7 @@ router.post("/question/new", (req, res, next) => {
     { $push: { questions: { ...rest } } },
     { new: true }
   )
-    .then((g) => res.status(201).json(g.questions.slice(-1)))
+    .then((g) => res.status(201).json(g.questions.slice(-1)[0]))
     .catch(next);
 });
 

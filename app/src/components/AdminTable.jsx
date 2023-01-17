@@ -11,7 +11,13 @@ import {
 
 import { AdminQuestionFormModal } from ".";
 
-const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
+const AdminTable = ({
+  questions,
+  categories,
+  setQuestions,
+  setCategories,
+  gameId,
+}) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
 
@@ -110,6 +116,7 @@ const AdminTable = ({ questions, categories, setQuestions, setCategories }) => {
           categories={categories}
           setCategories={setCategories}
           editingQuestion={editingQuestion}
+          gameId={gameId}
         />
       )}
     </>

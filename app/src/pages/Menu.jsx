@@ -3,7 +3,16 @@ import { Button, Card, Divider, Typography } from "@mui/material";
 import { endpoint, json } from "../utils";
 const { VIEWS } = "../constants";
 
-const Menu = ({ setAdmin, adminGames, setAdminGames, setGameId, setView }) => {
+const Menu = ({
+  setAdmin,
+  adminGames,
+  setAdminGames,
+  setGameId,
+  setView,
+  setTeams,
+  setCategories,
+  setQuestions,
+}) => {
   const createNewGame = () => {
     return fetch(endpoint("game/new"), { method: "POST" })
       .then(json)
@@ -12,6 +21,9 @@ const Menu = ({ setAdmin, adminGames, setAdminGames, setGameId, setView }) => {
         setAdminGames([...adminGames, g]);
         setAdmin(true);
         setView(VIEWS.admin);
+        setTeams(g.teams);
+        setCategories(g.categories);
+        setQuestions(g.questions);
       })
       .catch(console.error);
   };
@@ -23,6 +35,9 @@ const Menu = ({ setAdmin, adminGames, setAdminGames, setGameId, setView }) => {
         setGameId(g._id);
         setAdmin(true);
         setView(VIEWS.admin);
+        setTeams(g.teams);
+        setCategories(g.categories);
+        setQuestions(g.questions);
       })
       .catch(console.error);
   };

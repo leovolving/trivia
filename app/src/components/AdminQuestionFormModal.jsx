@@ -9,6 +9,8 @@ import {
   TextField,
 } from "@mui/material";
 
+import { json, endpoint } from "../utils";
+
 const INITIAL_POINTS = 100;
 
 // to be replaced with proper unique ID when connected to DB
@@ -22,6 +24,7 @@ const AdminQuestionFormModal = ({
   categories,
   setCategories,
   editingQuestion,
+  gameId,
 }) => {
   const isNew = !editingQuestion;
   const initialCategory = isNew
@@ -74,9 +77,18 @@ const AdminQuestionFormModal = ({
       (c) => c.label.toLowerCase() === inputCategory.toLowerCase()
     );
     if (existingMatch) return existingMatch.id;
-    const id = uuid();
-    setCategories([{ id, label: inputCategory }, ...categories]);
-    return id;
+
+    return fetch(endpoint("category/new"), {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      body: JSON.stringify({ label: inputCategory, game: gameId }),
+    })
+      .then(json)
+      .then((c) => {
+        setCategories([{ ...c, id: c._id }, ...categories]);
+        return c._id;
+      })
+      .catch(console.error);
   };
 
   const onTextFieldChange = (setStateFunction) => (event) => {
@@ -89,7 +101,7 @@ const AdminQuestionFormModal = ({
     setAnswers(newAnswers);
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     if (isNew) {
@@ -100,7 +112,7 @@ const AdminQuestionFormModal = ({
         createdAt: new Date(),
         isAnswered: false,
         answers: answers.filter(Boolean),
-        category: getOrCreateCategory(),
+        category: await getOrCreateCategory(),
       };
 
       setQuestions([newQuestion, ...questions]);

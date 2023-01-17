@@ -9,6 +9,7 @@ const Admin = ({
   setCategories,
   teams,
   setTeams,
+  gameId,
 }) => {
   return (
     <>
@@ -60,6 +61,7 @@ const Admin = ({
           setQuestions={setQuestions}
           categories={categories}
           setCategories={setCategories}
+          gameId={gameId}
         />
       </Card>
     </>
