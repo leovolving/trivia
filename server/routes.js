@@ -46,6 +46,13 @@ router.get("/game/:id", (req, res, next) => {
     .catch(next);
 });
 
+router.get("/game/code/:code", (req, res, next) => {
+  const { code } = req.params;
+  Game.findOne({ code })
+    .then((g) => res.status(200).json(g))
+    .catch(next);
+});
+
 router.put("/team/add-points", (req, res, next) => {
   const { id, points, game } = req.body;
   Game.findOneAndUpdate(

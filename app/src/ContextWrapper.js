@@ -30,14 +30,16 @@ const ContextWrapper = ({ children }) => {
     setQuestions((game.questions || []).map(transformId));
   };
 
-  const openGame = (id) => {
-    return fetch(endpoint(`game/${id}`), { method: "GET" })
+  const openGame = (key, isCode = false) => {
+    const route = "game/" + (isCode ? `code/${key}` : key);
+    return fetch(endpoint(route), { method: "GET" })
       .then(json)
       .then((g) => {
         setGameId(g._id);
-        setAdmin(isAdmin);
+        setAdmin(true);
         setView(VIEWS.admin);
         resetSubDocuments(g);
+        if (isCode) setAdminGames([...adminGames, g]);
       })
       .catch(console.error);
   };

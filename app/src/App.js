@@ -23,6 +23,7 @@ const App = () => {
     view,
     setView,
     resetSubDocuments,
+    adminGames,
   } = useAppContext();
 
   const toggleAdmin = () => {
@@ -52,6 +53,10 @@ const App = () => {
       <Card className="app-card" raised>
         <Typography variant="h1">Let's Get Trivial</Typography>
         <Button onClick={openMenu}>Main menu</Button>
+        <div>
+          Game code:{" "}
+          {adminGames.find(({ _id }) => _id === gameId)?.code || "N/A"}
+        </div>
         {isAdmin && (
           <div className="app-card-controls">
             <FormControlLabel

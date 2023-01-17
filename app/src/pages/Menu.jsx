@@ -1,4 +1,13 @@
-import { Button, Card, Divider, Typography } from "@mui/material";
+import { useState } from "react";
+
+import {
+  Button,
+  Card,
+  Divider,
+  FormLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import { endpoint, json } from "../utils";
 import { VIEWS } from "../constants";
@@ -7,6 +16,8 @@ import { useAppContext } from "../ContextWrapper";
 const Menu = () => {
   const { setAdmin, adminGames, setAdminGames, setGameId, setView, openGame } =
     useAppContext();
+
+  const [gameCode, setGameCode] = useState("");
 
   const createNewGame = () => {
     return fetch(endpoint("game/new"), { method: "POST" })
@@ -20,6 +31,16 @@ const Menu = () => {
       .catch(console.error);
   };
 
+  const onTextFieldChange = (event) => {
+    const { value } = event.target;
+    if (value.length < 5) setGameCode(value.toUpperCase());
+  };
+
+  const joinGame = (e) => {
+    e.preventDefault();
+    openGame(gameCode, true);
+  };
+
   return (
     <>
       <Typography variant="h2">Menu</Typography>
@@ -29,12 +50,22 @@ const Menu = () => {
       </Card>
       <Divider />
       <Card>
-        <Typography variant="h3">Return to an Existing Game</Typography>
+        <Typography variant="h3">Recent Games</Typography>
         {adminGames.map(({ code, _id }) => (
           <Button key={code} onClick={() => openGame(_id)}>
             {code}
           </Button>
         ))}
+      </Card>
+      <Card>
+        <Typography variant="h3">Join a Game</Typography>
+        <form onSubmit={joinGame}>
+          <FormLabel>
+            4-character game code:
+            <TextField value={gameCode} onChange={onTextFieldChange} />
+          </FormLabel>
+          <Button type="submit">Join</Button>
+        </form>
       </Card>
     </>
   );
