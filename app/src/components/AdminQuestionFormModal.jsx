@@ -9,13 +9,10 @@ import {
   TextField,
 } from "@mui/material";
 
-import { json, endpoint } from "../utils";
+import { json, endpoint, headers, transformId } from "../utils";
 import { useAppContext } from "../ContextWrapper";
 
 const INITIAL_POINTS = 100;
-
-// to be replaced with proper unique ID when connected to DB
-const uuid = () => new Date().getTime();
 
 const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
   const { questions, setQuestions, categories, setCategories, gameId } =
@@ -74,7 +71,7 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     if (existingMatch) return existingMatch.id;
 
     return fetch(endpoint("category/new"), {
-      headers: { "Content-Type": "application/json" },
+      headers,
       method: "POST",
       body: JSON.stringify({ label: inputCategory, game: gameId }),
     })
@@ -96,6 +93,20 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     setAnswers(newAnswers);
   };
 
+  const fetchQuestion = async (method) => {
+    const body = JSON.stringify({
+      question,
+      points: +points,
+      answers: answers.filter(Boolean),
+      category: await getOrCreateCategory(),
+      game: gameId,
+    });
+    const route = method === "POST" ? "new" : `${editingQuestion.id}/edit`;
+    return fetch(endpoint(`question/${route}`), { method, body, headers })
+      .then(json)
+      .catch(console.error);
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
@@ -103,15 +114,14 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
       const newQuestion = {
         question,
         points: +points,
-        id: uuid(),
-        createdAt: new Date(),
-        isAnswered: false,
         answers: answers.filter(Boolean),
         category: await getOrCreateCategory(),
       };
 
-      setQuestions([newQuestion, ...questions]);
-      clearInputs();
+      fetchQuestion("POST").then((res) => {
+        setQuestions([transformId(newQuestion), ...questions]);
+        clearInputs();
+      });
     } else {
       const updatedQuestions = questions.map((q) =>
         q.id !== editingQuestion.id

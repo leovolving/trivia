@@ -35,7 +35,7 @@ const ContextWrapper = ({ children }) => {
         setView(VIEWS.admin);
         setTeams(g.teams);
         setCategories(g.categories.map(transformId));
-        setQuestions(g.questions);
+        setQuestions(g.questions.map(transformId));
       })
       .catch(console.error);
   };

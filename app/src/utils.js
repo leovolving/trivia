@@ -5,6 +5,8 @@ export const endpoint = (route) => "http://localhost:5050/" + route;
 
 export const json = (res) => res.json();
 
+export const headers = { "Content-Type": "application/json" };
+
 export const useStorageState = (initialState, formKey) => {
   const existingState = JSON.parse(localStorage.getItem(formKey));
   const [state, setState] = useState(existingState || initialState);
