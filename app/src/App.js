@@ -9,6 +9,7 @@ import {
 import { Admin, Game, Menu } from "./pages";
 
 import { VIEWS } from "./constants";
+import { endpoint, json } from "./utils";
 import { useAppContext } from "./ContextWrapper";
 
 import "./index.css";
@@ -21,10 +22,7 @@ const App = () => {
     setAdmin,
     view,
     setView,
-    questions,
-    setQuestions,
-    setTeams,
-    setCategories,
+    resetSubDocuments,
   } = useAppContext();
 
   const toggleAdmin = () => {
@@ -37,16 +35,16 @@ const App = () => {
 
     if (!window.confirm(resetWarning)) return null;
 
-    setQuestions(questions.map((q) => ({ ...q, isAnswered: false })));
-    setTeams([]);
+    fetch(endpoint(`game/${gameId}/reset`), { method: "PUT" })
+      .then(json)
+      .then(resetSubDocuments)
+      .catch(console.error);
   };
 
   const openMenu = () => {
     setGameId(null);
     setAdmin(false);
-    setTeams([]);
-    setCategories([]);
-    setQuestions([]);
+    resetSubDocuments();
   };
 
   return (

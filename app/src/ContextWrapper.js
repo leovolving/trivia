@@ -24,6 +24,12 @@ const ContextWrapper = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [teams, setTeams] = useState([]);
 
+  const resetSubDocuments = (game = {}) => {
+    setTeams((game.teams || []).map(transformId));
+    setCategories((game.categories || []).map(transformId));
+    setQuestions((game.questions || []).map(transformId));
+  };
+
   const openGame = (id) => {
     return fetch(endpoint(`game/${id}`), { method: "GET" })
       .then(json)
@@ -31,15 +37,13 @@ const ContextWrapper = ({ children }) => {
         setGameId(g._id);
         setAdmin(isAdmin);
         setView(VIEWS.admin);
-        setTeams(g.teams.map(transformId));
-        setCategories(g.categories.map(transformId));
-        setQuestions(g.questions.map(transformId));
+        resetSubDocuments(g);
       })
       .catch(console.error);
   };
 
   useEffect(() => {
-    if (gameId !== "null") openGame(gameId);
+    if (gameId !== "null" && gameId !== null) openGame(gameId);
     // eslint-disable-next-line
   }, []);
 
@@ -59,6 +63,7 @@ const ContextWrapper = ({ children }) => {
     teams,
     setTeams,
     openGame,
+    resetSubDocuments,
   };
   return <Context.Provider value={context}>{children}</Context.Provider>;
 };
