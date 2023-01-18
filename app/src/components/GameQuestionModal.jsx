@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { endpoint, json, headers } from "../utils";
+import { endpoint, headers } from "../utils";
 import { useAppContext } from "../ContextWrapper";
 
 const GameQuestionModal = ({ questionId, onClose }) => {
