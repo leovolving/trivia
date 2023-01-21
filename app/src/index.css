@@ -85,10 +85,43 @@ body {
 .modal-card {
     min-height: 250px;
     width: 500px;
-    padding: 50px;
+    padding: 32px;
     display: flex;
     gap: 40px;
     flex-direction: column;
+}
+
+.modal-close-button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-close-button {
+    position: relative;
+    height: 24px;
+    width: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close-button::before,
+.modal-close-button::after {
+    position: absolute;
+    content: '';
+    width: 24px;
+    height: 24px;
+    height: 2px;
+    background-color: grey;
+}
+
+.modal-close-button::before {
+    transform: rotate(45deg);
+}
+
+.modal-close-button::after {
+    transform: rotate(-45deg);
 }
 
 .answer-options-list {
