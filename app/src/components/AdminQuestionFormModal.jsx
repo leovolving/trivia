@@ -1,13 +1,8 @@
 import { useState } from "react";
 
-import {
-  Autocomplete,
-  Button,
-  Card,
-  FormLabel,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Button, FormLabel, TextField } from "@mui/material";
+
+import { Modal } from "../_ds";
 
 import { json, endpoint, headers, transformId } from "../utils";
 import { useAppContext } from "../ContextWrapper";
@@ -137,72 +132,70 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose} className="modal">
-      <Card className="modal-card">
-        <form id="new-question-form" onSubmit={onSubmit}>
-          <FormLabel>
-            Category
-            <Autocomplete
-              freeSolo
-              options={categories}
-              renderInput={(params) => (
-                <TextField size="small" {...params} required />
-              )}
-              onChange={onAutocompleteChange}
-              inputValue={inputCategory}
-              onInputChange={onAutocompleteChange}
-              value={category}
-              sx={{ marginBottom: "25px" }}
-            />
-          </FormLabel>
+    <Modal open={isOpen} onClose={onClose}>
+      <form id="new-question-form" onSubmit={onSubmit}>
+        <FormLabel>
+          Category
+          <Autocomplete
+            freeSolo
+            options={categories}
+            renderInput={(params) => (
+              <TextField size="small" {...params} required />
+            )}
+            onChange={onAutocompleteChange}
+            inputValue={inputCategory}
+            onInputChange={onAutocompleteChange}
+            value={category}
+            sx={{ marginBottom: "25px" }}
+          />
+        </FormLabel>
 
-          <div className="question-form-points-container">
-            <TextField
-              size="small"
-              onChange={onTextFieldChange(setQuestion)}
-              value={question}
-              label="Question"
-              required
-            />
+        <div className="question-form-points-container">
+          <TextField
+            size="small"
+            onChange={onTextFieldChange(setQuestion)}
+            value={question}
+            label="Question"
+            required
+          />
 
-            <TextField
-              size="small"
-              onChange={onTextFieldChange(setPoints)}
-              value={points}
-              inputProps={{ type: "number" }}
-              label="Points"
-              required
-            />
-          </div>
+          <TextField
+            size="small"
+            onChange={onTextFieldChange(setPoints)}
+            value={points}
+            inputProps={{ type: "number" }}
+            label="Points"
+            required
+          />
+        </div>
 
-          <div>
-            <h3>Multiple choice options (optional)</h3>
-            {answers.map((a, i) => (
-              <TextField
-                key={i}
-                size="small"
-                onChange={onMultipleChoiceOptionChange(i)}
-                value={a}
-                label={`option ${i + 1}`}
-                autoFocus
-                sx={{ marginRight: "16px", marginBottom: "16px" }}
-              />
-            ))}
+        <div>
+          <h3>Multiple choice options (optional)</h3>
+          {answers.map((a, i) => (
             <TextField
-              key={answers.length}
+              key={i}
               size="small"
-              onChange={onMultipleChoiceOptionChange(answers.length)}
-              value={""}
-              label={`option ${answers.length + 1}`}
+              onChange={onMultipleChoiceOptionChange(i)}
+              value={a}
+              label={`option ${i + 1}`}
+              autoFocus
               sx={{ marginRight: "16px", marginBottom: "16px" }}
             />
-          </div>
+          ))}
+          <TextField
+            key={answers.length}
+            size="small"
+            onChange={onMultipleChoiceOptionChange(answers.length)}
+            value={""}
+            label={`option ${answers.length + 1}`}
+            sx={{ marginRight: "16px", marginBottom: "16px" }}
+          />
+        </div>
 
-          <Button variant="contained" type="submit" sx={{ marginTop: "24px" }}>
-            {isNew ? "Add" : "Save"}
-          </Button>
-        </form>
-      </Card>
+        <Button variant="contained" type="submit" sx={{ marginTop: "24px" }}>
+          {isNew ? "Add" : "Save"}
+        </Button>
+      </form>
     </Modal>
   );
 };

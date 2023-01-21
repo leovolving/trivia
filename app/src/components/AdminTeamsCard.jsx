@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-import { Button, Card, Modal, TextField, Typography } from "@mui/material";
+import { Button, Card, TextField, Typography } from "@mui/material";
+
+import { Modal } from "../_ds";
 
 import { transformId, endpoint, json, headers } from "../utils";
 import { useAppContext } from "../ContextWrapper";
@@ -52,10 +54,9 @@ const AdminTeamsCard = () => {
       </ul>
       <Modal
         open={isAddTeamsModalOpen}
-        className="modal"
         onClose={() => setAddTeamsModalOpen(false)}
       >
-        <Card className="modal-card">
+        <>
           <Typography variant="h4" gutterBottom>
             Add teams
           </Typography>
@@ -81,7 +82,7 @@ const AdminTeamsCard = () => {
             />
             <Button type="submit">Add teams</Button>
           </form>
-        </Card>
+        </>
       </Modal>
     </Card>
   );
