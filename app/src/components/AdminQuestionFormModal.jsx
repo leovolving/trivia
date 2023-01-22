@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { Autocomplete, Button, FormLabel, TextField } from "@mui/material";
+import { Autocomplete, FormLabel, TextField } from "@mui/material";
 
-import { Modal } from "../_ds";
+import { LoadingButton, Modal } from "../_ds";
 
 import { json, endpoint, headers, transformId } from "../utils";
 import { useAppContext } from "../ContextWrapper";
@@ -20,6 +20,7 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
   const currentOrDefault = (valueKey, defaultValue) =>
     isNew ? defaultValue : editingQuestion[valueKey];
 
+  const [isLoading, setLoading] = useState(false);
   const [category, setCategory] = useState(initialCategory);
   const [inputCategory, setInputCategory] = useState(
     initialCategory?.label || ""
@@ -89,6 +90,7 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
   };
 
   const fetchQuestion = async (method) => {
+    setLoading(true);
     const categoryId = await getOrCreateCategory();
     const body = JSON.stringify({
       question,
@@ -100,7 +102,8 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     const route = method === "POST" ? "new" : `${editingQuestion.id}/edit`;
     return fetch(endpoint(`question/${route}`), { method, body, headers })
       .then(method === "POST" ? json : () => categoryId)
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
   const onSubmit = async (e) => {
@@ -192,9 +195,14 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
           />
         </div>
 
-        <Button variant="contained" type="submit" sx={{ marginTop: "24px" }}>
+        <LoadingButton
+          isLoading={isLoading}
+          variant="contained"
+          type="submit"
+          sx={{ marginTop: "24px" }}
+        >
           {isNew ? "Add" : "Save"}
-        </Button>
+        </LoadingButton>
       </form>
     </Modal>
   );

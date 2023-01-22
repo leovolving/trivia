@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { Button, Card, TextField, Typography } from "@mui/material";
 
-import { Modal } from "../_ds";
+import { LoadingButton, Modal } from "../_ds";
 
 import { transformId, endpoint, json, headers } from "../utils";
 import { useAppContext } from "../ContextWrapper";
@@ -10,6 +10,7 @@ import { useAppContext } from "../ContextWrapper";
 const AdminTeamsCard = () => {
   const { teams, setTeams, gameId } = useAppContext();
 
+  const [isLoading, setLoading] = useState(false);
   const [isAddTeamsModalOpen, setAddTeamsModalOpen] = useState(false);
   const [teamInputs, setTeamInputs] = useState([]);
 
@@ -21,6 +22,7 @@ const AdminTeamsCard = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     const addedTeams = teamInputs.filter(Boolean).map((name) =>
       fetch(endpoint("team/new"), {
         method: "POST",
@@ -31,11 +33,14 @@ const AdminTeamsCard = () => {
         .catch(console.error)
     );
 
-    Promise.all(addedTeams).then((res) => {
-      setTeams([...teams, ...res.map(transformId)]);
-      setTeamInputs([]);
-      setAddTeamsModalOpen(false);
-    });
+    Promise.all(addedTeams)
+      .then((res) => {
+        setTeams([...teams, ...res.map(transformId)]);
+        setTeamInputs([]);
+        setAddTeamsModalOpen(false);
+      })
+      .catch(console.error)
+      .finally(setLoading(false));
   };
   return (
     <Card sx={{ padding: "16px" }}>
@@ -80,7 +85,9 @@ const AdminTeamsCard = () => {
               label={`Team ${teamInputs.length + 1}`}
               sx={{ marginRight: "16px", marginBottom: "16px" }}
             />
-            <Button type="submit">Add teams</Button>
+            <LoadingButton isLoading={isLoading} type="submit">
+              Add teams
+            </LoadingButton>
           </form>
         </>
       </Modal>

@@ -9,7 +9,7 @@ const Modal = (props) => {
           <div className="modal-close-button-container">
             <Button
               onClick={props.onClose}
-              ariaLabel="close"
+              aria-label="close"
               className="modal-close-button"
             />
           </div>
