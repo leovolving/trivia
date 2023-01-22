@@ -138,3 +138,14 @@ body {
     padding-left: 16px;
     margin: 0 auto;
 }
+
+.menu-card {
+    padding: 24px;
+    margin: 32px 0;
+}
+
+.menu-join-input {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}

@@ -4,7 +4,11 @@ import {
   Button,
   Card,
   Divider,
-  FormLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -44,28 +48,72 @@ const Menu = () => {
   return (
     <>
       <Typography variant="h2">Menu</Typography>
-      <Card>
-        <Typography variant="h3">New Game</Typography>
-        <Button onClick={createNewGame}>Create new game</Button>
+      <Card className="menu-card">
+        <Typography gutterBottom variant="h3">
+          New Game
+        </Typography>
+        <Typography gutterBottom>
+          You will be able to add your own questions and be granted a unique
+          code for others to join.
+        </Typography>
+        <Button variant="contained" onClick={createNewGame}>
+          Create new game
+        </Button>
       </Card>
       <Divider />
-      <Card>
-        <Typography variant="h3">Recent Games</Typography>
-        {adminGames.map(({ code, _id }) => (
-          <Button key={code} onClick={() => openGame(_id)}>
-            {code}
-          </Button>
-        ))}
-      </Card>
-      <Card>
-        <Typography variant="h3">Join a Game</Typography>
+      <Card className="menu-card">
+        <Typography gutterBottom variant="h3">
+          Join a Game
+        </Typography>
         <form onSubmit={joinGame}>
-          <FormLabel>
-            4-character game code:
-            <TextField value={gameCode} onChange={onTextFieldChange} />
-          </FormLabel>
-          <Button type="submit">Join</Button>
+          <Typography
+            gutterBottom
+            component="label"
+            htmlFor="code"
+            sx={{ display: "block" }}
+          >
+            Enter the 4-character game code to join an existing game.
+          </Typography>
+          <div className="menu-join-input">
+            <TextField
+              value={gameCode}
+              onChange={onTextFieldChange}
+              name="code"
+            />
+            <Button variant="outlined" type="submit">
+              Join
+            </Button>
+          </div>
         </form>
+      </Card>
+      <Divider />
+      <Card className="menu-card">
+        <Typography gutterBottom variant="h3">
+          Recent Games
+        </Typography>
+        <Typography>Rejoin one of your recent games</Typography>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Code</TableCell>
+              <TableCell>Created</TableCell>
+              <TableCell>Updated</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {adminGames.map((g) => (
+              <TableRow key={g.code}>
+                <TableCell>{g.code}</TableCell>
+                <TableCell>{new Date(g.createdAt).toLocaleString()}</TableCell>
+                <TableCell>{new Date(g.updatedAt).toLocaleString()}</TableCell>
+                <TableCell>
+                  <Button onClick={() => openGame(g._id)}>Join</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Card>
     </>
   );
