@@ -4,8 +4,17 @@ body {
 
 .app-card {
     display: flex;
-    justify-content: space-between;
+    gap: 32px;
     margin-bottom: 32px;
+    justify-content: space-between;
+}
+
+.app-card-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    padding: 16px;
 }
 
 .app-card-controls {

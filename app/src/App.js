@@ -52,33 +52,37 @@ const App = () => {
     <>
       <Card className="app-card" raised>
         <Typography variant="h1">Let's Get Trivial</Typography>
-        <Button onClick={openMenu}>Main menu</Button>
-        <div>
-          Game code:{" "}
-          {adminGames.find(({ _id }) => _id === gameId)?.code || "N/A"}
+        <div className="app-card-menu">
+          <Typography>
+            Game code:{" "}
+            {adminGames.find(({ _id }) => _id === gameId)?.code || "N/A"}
+          </Typography>
+          <Button variant="outlined" onClick={openMenu}>
+            Main menu
+          </Button>
+          {isAdmin && (
+            <div className="app-card-controls">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={view === VIEWS.admin}
+                    onChange={toggleAdmin}
+                    color="success"
+                  />
+                }
+                label="Admin mode"
+              />
+              <Button
+                type="button"
+                onClick={resetGame}
+                color="error"
+                variant="outlined"
+              >
+                Reset game
+              </Button>
+            </div>
+          )}
         </div>
-        {isAdmin && (
-          <div className="app-card-controls">
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={view === VIEWS.admin}
-                  onChange={toggleAdmin}
-                  color="success"
-                />
-              }
-              label="Admin mode"
-            />
-            <Button
-              type="button"
-              onClick={resetGame}
-              color="error"
-              variant="outlined"
-            >
-              Reset game
-            </Button>
-          </div>
-        )}
       </Card>
       {gameId ? <>{view === VIEWS.admin ? <Admin /> : <Game />}</> : <Menu />}
     </>
