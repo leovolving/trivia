@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   Divider,
+  FormControlLabel,
+  Switch,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +25,11 @@ const Menu = () => {
     useAppContext();
 
   const [gameCode, setGameCode] = useState("");
+  const [adminSwitchOn, setAdminSwitchOn] = useState(false);
+
+  const toggleAdminSwitch = (event) => {
+    setAdminSwitchOn(event.target.checked);
+  };
 
   const createNewGame = () => {
     return fetch(endpoint("game/new"), { method: "POST" })
@@ -43,7 +50,7 @@ const Menu = () => {
 
   const joinGame = (e) => {
     e.preventDefault();
-    openGame(gameCode, true);
+    openGame(gameCode, true, adminSwitchOn);
   };
 
   return (
@@ -85,6 +92,16 @@ const Menu = () => {
               Join
             </Button>
           </div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={adminSwitchOn}
+                onChange={toggleAdminSwitch}
+                color="success"
+              />
+            }
+            label="Admin mode"
+          />
         </form>
       </Card>
       <Divider />

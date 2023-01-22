@@ -12,7 +12,7 @@ import { GameQuestionModal, Scoreboard } from "../components";
 import { useAppContext } from "../ContextWrapper";
 
 const Game = () => {
-  const { categories, questions } = useAppContext();
+  const { categories, questions, isAdmin } = useAppContext();
 
   const [openQuestion, setOpenQuestion] = useState(null);
   const [isScoreboardOpen, setScoreboardOpen] = useState(false);
@@ -54,6 +54,7 @@ const Game = () => {
                         className={
                           q.isAnswered ? "game-question__answered" : ""
                         }
+                        disabled={!q.isAnswered && !isAdmin}
                       >
                         <CardContent sx={{ textAlign: "center" }}>
                           <b>{q.points}</b>

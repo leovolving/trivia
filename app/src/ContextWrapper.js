@@ -30,15 +30,16 @@ const ContextWrapper = ({ children }) => {
     setQuestions((game.questions || []).map(transformId));
   };
 
-  const openGame = (key, isCode = false) => {
+  const openGame = (key, isCode = false, joiningAsAdmin = true) => {
     const route = "game/" + (isCode ? `code/${key}` : key);
     return fetch(endpoint(route), { method: "GET" })
       .then(json)
       .then((g) => {
         setGameId(g._id);
-        setAdmin(true);
-        setView(VIEWS.admin);
+        setAdmin(joiningAsAdmin);
+        setView(joiningAsAdmin ? VIEWS.admin : VIEWS.game);
         resetSubDocuments(g);
+        // TODO: only add if not already in adminGames
         if (isCode) setAdminGames([...adminGames, g]);
       })
       .catch(console.error);
