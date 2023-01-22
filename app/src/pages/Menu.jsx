@@ -7,6 +7,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -92,28 +93,30 @@ const Menu = () => {
           Recent Games
         </Typography>
         <Typography>Rejoin one of your recent games</Typography>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Code</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Updated</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {adminGames.map((g) => (
-              <TableRow key={g.code}>
-                <TableCell>{g.code}</TableCell>
-                <TableCell>{new Date(g.createdAt).toLocaleString()}</TableCell>
-                <TableCell>{new Date(g.updatedAt).toLocaleString()}</TableCell>
-                <TableCell>
-                  <Button onClick={() => openGame(g._id)}>Join</Button>
-                </TableCell>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Code</TableCell>
+                <TableCell>Last updated</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {adminGames.map((g) => (
+                <TableRow key={g.code}>
+                  <TableCell>{g.code}</TableCell>
+                  <TableCell>
+                    {new Date(g.updatedAt).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    <Button onClick={() => openGame(g._id)}>Join</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Card>
     </>
   );

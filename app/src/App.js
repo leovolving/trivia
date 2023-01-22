@@ -51,7 +51,9 @@ const App = () => {
   return (
     <>
       <Card className="app-card" raised>
-        <Typography variant="h1">Let's Get Trivial</Typography>
+        <Typography variant="h2" component="h1">
+          Let's Get Trivial
+        </Typography>
         <div className="app-card-menu">
           <Typography>
             Game code:{" "}

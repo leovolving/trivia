@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // TODO: update domain based on env
-export const endpoint = (route) => "http://localhost:5050/" + route;
+export const endpoint = (route) => "http://192.168.1.172:5050/" + route;
 
 export const json = (res) => res.json();
 

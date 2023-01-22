@@ -3,10 +3,7 @@ body {
 }
 
 .app-card {
-    display: flex;
-    gap: 32px;
     margin-bottom: 32px;
-    justify-content: space-between;
 }
 
 .app-card-menu {
