@@ -33,7 +33,7 @@ wss.on("connection", (ws, _request) => {
         console.log(data);
         const g = await Game.findOne({ code: data.gameCode });
         ws.send(
-          JSON.stringify({ type: MESSAGE_TYPES.SERVER_GAME_OBJECT, game: g })
+          JSON.stringify({ type: MESSAGE_TYPES.SERVER_GAME_OBJECT, payload: g })
         );
       default:
         console.log(data);

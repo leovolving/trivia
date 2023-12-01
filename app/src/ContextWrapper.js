@@ -1,6 +1,6 @@
 import { useState, useContext, createContext, useEffect } from "react";
 
-import { VIEWS } from "./constants";
+import { VIEWS, MESSAGE_TYPES } from "./constants";
 import { json, endpoint, useStorageState, transformId } from "./utils";
 
 const Context = createContext();
@@ -31,23 +31,32 @@ const ContextWrapper = ({ children }) => {
     setQuestions((game.questions || []).map(transformId));
   };
 
+  const setupGameState = (g) => {
+    setGameId(g._id);
+    resetSubDocuments(g);
+    if (!adminGames.some(({ _id }) => _id === g._id)) {
+      setAdminGames([...adminGames, g]);
+    }
+  };
+
   const openGame = (key, isCode = false, joiningAsAdmin = true) => {
     if (isCode) {
+      console.log("in isCode");
       ws.send(JSON.stringify({ type: "join", gameCode: key }));
     } else {
       const route = "game/" + (isCode ? `code/${key}` : key);
       return fetch(endpoint(route), { method: "GET" })
         .then(json)
-        .then((g) => {
-          setGameId(g._id);
-          setAdmin(joiningAsAdmin);
-          setView(joiningAsAdmin ? VIEWS.admin : VIEWS.game);
-          resetSubDocuments(g);
-          // TODO: only add if not already in adminGames
-          if (isCode) setAdminGames([...adminGames, g]);
-        })
+        .then(setupGameState)
         .catch(console.error);
     }
+    setAdmin(joiningAsAdmin);
+    setView(joiningAsAdmin ? VIEWS.admin : VIEWS.game);
+  };
+
+  // TODO: use a hook to set this up?
+  const webSocketEventCallbacks = {
+    [MESSAGE_TYPES.SERVER_GAME_OBJECT]: setupGameState,
   };
 
   useEffect(() => {
@@ -57,9 +66,11 @@ const ContextWrapper = ({ children }) => {
 
     socket.addEventListener("open", () => setWs(socket));
 
-    socket.addEventListener("message", (data) =>
-      console.log(JSON.stringify(data))
-    );
+    socket.addEventListener("message", (event) => {
+      const data = JSON.parse(event.data);
+      console.log(`Calling websocket cb for ${data.type}`);
+      webSocketEventCallbacks[data.type](data.payload);
+    });
 
     return () => {
       if (socket.readyState === 1) {
