@@ -1,7 +1,7 @@
 import { useState, useContext, createContext, useEffect } from "react";
 
 import { VIEWS, MESSAGE_TYPES } from "./constants";
-import { json, endpoint, useStorageState, transformId } from "./utils";
+import { useStorageState, transformId } from "./utils";
 
 const Context = createContext();
 
@@ -39,17 +39,18 @@ const ContextWrapper = ({ children }) => {
     }
   };
 
+  // TODO: remove second argument
   const openGame = (key, isCode = false, joiningAsAdmin = true) => {
-    if (isCode) {
-      console.log("in isCode");
-      ws.send(JSON.stringify({ type: "join", gameCode: key }));
-    } else {
-      const route = "game/" + (isCode ? `code/${key}` : key);
-      return fetch(endpoint(route), { method: "GET" })
-        .then(json)
-        .then(setupGameState)
-        .catch(console.error);
-    }
+    ws.send(
+      JSON.stringify({
+        type: MESSAGE_TYPES.CLIENT_JOIN_GAME,
+        key,
+        isCode,
+        isAdmin: joiningAsAdmin,
+      })
+    );
+
+    // TODO: set admin via WS response message (or put this in try/catch maybe)
     setAdmin(joiningAsAdmin);
     setView(joiningAsAdmin ? VIEWS.admin : VIEWS.game);
   };
@@ -60,11 +61,13 @@ const ContextWrapper = ({ children }) => {
   };
 
   useEffect(() => {
-    if (gameId !== "null" && gameId !== null) openGame(gameId);
-
     const socket = new WebSocket("ws://localhost:5150");
 
-    socket.addEventListener("open", () => setWs(socket));
+    socket.addEventListener("open", () => {
+      setWs(socket);
+      // fetch game on load if one is already started
+      if (gameId !== "null" && gameId !== null) openGame(gameId);
+    });
 
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data);

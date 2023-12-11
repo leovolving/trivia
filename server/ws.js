@@ -1,8 +1,8 @@
 const { WebSocketServer } = require("ws");
 const mongoose = require("mongoose");
 
-const { Game } = require("./models");
-const { DATABASE_URL, MESSAGE_TYPES } = require("./constants");
+const { DATABASE_URL } = require("./constants");
+const { wsRoutes } = require("./ws-routes");
 
 const wss = new WebSocketServer({ port: 5150, host: "localhost" }, () => {
   console.log("Server started on port 5150");
@@ -26,17 +26,13 @@ wss.on("connection", (ws, _request) => {
   ws.on("message", async (_data) => {
     const data = JSON.parse(_data);
 
-    switch (data.type) {
-      case MESSAGE_TYPES.CLIENT_JOIN_GAME:
-        ws.gameCode = data.gameCode;
-        ws.isAdmin = data.isAdmin;
-        console.log(data);
-        const g = await Game.findOne({ code: data.gameCode });
-        ws.send(
-          JSON.stringify({ type: MESSAGE_TYPES.SERVER_GAME_OBJECT, payload: g })
-        );
-      default:
-        console.log(data);
+    const msgRoute = wsRoutes[data.type];
+    if (msgRoute) {
+      const payload = await msgRoute.fn(data, ws);
+      // TODO: handle responses to more than just the requester
+      ws.send(JSON.stringify({ type: msgRoute.responseMessage, payload }));
+    } else {
+      console.error("No msgRoute", data);
     }
   });
 });

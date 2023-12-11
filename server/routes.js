@@ -2,6 +2,7 @@ const { Router } = require("express");
 
 const { Game } = require("./models");
 const helpers = require("./helpers");
+const { getGameByCode, getGameById } = require("./model-helpers");
 
 const router = new Router();
 
@@ -41,14 +42,14 @@ router.post("/team/new", (req, res, next) => {
 });
 
 router.get("/game/:id", (req, res, next) => {
-  Game.findById(req.params.id)
+  getGameById(req.params.id)
     .then((g) => res.status(200).json(g))
     .catch(next);
 });
 
 router.get("/game/code/:code", (req, res, next) => {
   const { code } = req.params;
-  Game.findOne({ code })
+  getGameByCode(code)
     .then((g) => res.status(200).json(g))
     .catch(next);
 });
@@ -90,7 +91,7 @@ router.put("/question/:id/edit", (req, res, next) => {
 });
 
 router.put("/game/:id/reset", async (req, res, next) => {
-  const game = await Game.findById(req.params.id);
+  const game = await getGameById(req.params.id);
   const teams = game.teams.map((t) => ({
     ...t,
     _doc: { ...t._doc, points: 0 },
@@ -110,7 +111,7 @@ router.put("/game/:id/reset", async (req, res, next) => {
 });
 
 router.delete("/game/:id/question/:questionId", async (req, res, next) => {
-  const game = await Game.findById(req.params.id);
+  const game = await getGameById(req.params.id);
   game.questions.id(req.params.questionId).remove();
   game.save((err) => {
     if (err) return next(err);
