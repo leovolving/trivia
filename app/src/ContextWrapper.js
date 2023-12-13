@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useEffect } from "react";
+import { useState, useContext, createContext, useEffect, useRef } from "react";
 
 import { VIEWS, MESSAGE_TYPES } from "./constants";
 import { useStorageState, transformId } from "./utils";
@@ -23,7 +23,8 @@ const ContextWrapper = ({ children }) => {
   const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [ws, setWs] = useState({});
+
+  const webSocket = useRef({});
 
   const resetSubDocuments = (game = {}) => {
     setTeams((game.teams || []).map(transformId));
@@ -39,9 +40,8 @@ const ContextWrapper = ({ children }) => {
     }
   };
 
-  // TODO: remove second argument
   const openGame = (key, isCode = false, joiningAsAdmin = true) => {
-    ws.send(
+    webSocket.current.send(
       JSON.stringify({
         type: MESSAGE_TYPES.CLIENT_JOIN_GAME,
         key,
@@ -64,7 +64,7 @@ const ContextWrapper = ({ children }) => {
     const socket = new WebSocket("ws://localhost:5150");
 
     socket.addEventListener("open", () => {
-      setWs(socket);
+      webSocket.current = socket;
       // fetch game on load if one is already started
       if (gameId !== "null" && gameId !== null) openGame(gameId);
     });
@@ -101,7 +101,7 @@ const ContextWrapper = ({ children }) => {
     setTeams,
     openGame,
     resetSubDocuments,
-    ws,
+    ws: webSocket.current,
   };
   return <Context.Provider value={context}>{children}</Context.Provider>;
 };
