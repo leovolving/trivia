@@ -60,6 +60,12 @@ const ContextWrapper = ({ children }) => {
   // TODO: use a hook to set this up?
   const webSocketEventCallbacks = {
     [MESSAGE_TYPES.SERVER_GAME_OBJECT]: setupGameState,
+    [MESSAGE_TYPES.SERVER_QUESTION_RESPONSE]: (data) => {
+      if (data.newCategory) {
+        setCategories((prev) => [...prev, transformId(data.newCategory)]);
+      }
+      setQuestions(data.questions.map(transformId));
+    },
   };
 
   useEffect(() => {

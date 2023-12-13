@@ -4,14 +4,13 @@ import { Autocomplete, FormLabel, TextField } from "@mui/material";
 
 import { LoadingButton, Modal } from "../_ds";
 
-import { json, endpoint, headers, transformId } from "../utils";
+import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const INITIAL_POINTS = 100;
 
 const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
-  const { questions, setQuestions, categories, setCategories, gameId } =
-    useAppContext();
+  const { categories, gameId, sendWebSocketMessage } = useAppContext();
 
   const isNew = !editingQuestion;
   const initialCategory = isNew
@@ -65,18 +64,6 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
       (c) => c.label.toLowerCase() === inputCategory.toLowerCase()
     );
     if (existingMatch) return existingMatch.id;
-
-    return fetch(endpoint("category/new"), {
-      headers,
-      method: "POST",
-      body: JSON.stringify({ label: inputCategory, game: gameId }),
-    })
-      .then(json)
-      .then((c) => {
-        setCategories([{ ...c, id: c._id }, ...categories]);
-        return c._id;
-      })
-      .catch(console.error);
   };
 
   const onTextFieldChange = (setStateFunction) => (event) => {
@@ -89,49 +76,29 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     setAnswers(newAnswers);
   };
 
-  const fetchQuestion = async (method) => {
+  const fetchQuestion = async () => {
     setLoading(true);
     const categoryId = await getOrCreateCategory();
-    const body = JSON.stringify({
-      question,
+    const wsData = {
+      gameId,
+      categoryLabel: inputCategory,
+      categoryId,
+      isNewCategory: !categoryId,
       points: +points,
       answers: answers.filter(Boolean),
-      category: categoryId,
-      game: gameId,
-    });
-    const route = method === "POST" ? "new" : `${editingQuestion.id}/edit`;
-    return fetch(endpoint(`question/${route}`), { method, body, headers })
-      .then(method === "POST" ? json : () => categoryId)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      question,
+      questionId: editingQuestion?.id,
+    };
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_QUESTION_FORM, wsData);
+    setLoading(false);
+    clearInputs();
+    onClose();
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (isNew) {
-      fetchQuestion("POST").then((res) => {
-        setQuestions([transformId(res), ...questions]);
-        clearInputs();
-      });
-    } else {
-      fetchQuestion("PUT").then((categoryId) => {
-        const updatedQuestions = questions.map((q) =>
-          q.id !== editingQuestion.id
-            ? q
-            : {
-                ...q,
-                question,
-                points: +points,
-                answers: answers.filter(Boolean),
-                category: categoryId,
-              }
-        );
-
-        setQuestions(updatedQuestions);
-        onClose();
-      });
-    }
+    await fetchQuestion();
   };
 
   return (

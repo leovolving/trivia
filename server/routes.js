@@ -1,8 +1,9 @@
 const { Router } = require("express");
 
 const { Game } = require("./models");
-const helpers = require("./helpers");
 const {
+  addCategory,
+  addOrEditQuestion,
   createNewGame,
   getGameByCode,
   getGameById,
@@ -18,22 +19,14 @@ router.post("/game/new", (_, res, next) => {
 
 router.post("/category/new", (req, res, next) => {
   const { label, game } = req.body;
-  Game.findByIdAndUpdate(
-    game,
-    { $push: { categories: { label } } },
-    { new: true }
-  )
+  addCategory(game, label)
     .then((g) => res.status(201).json(g.categories.slice(-1)[0]))
     .catch(next);
 });
 
 router.post("/question/new", (req, res, next) => {
   const { game, ...rest } = req.body;
-  Game.findByIdAndUpdate(
-    game,
-    { $push: { questions: { ...rest } } },
-    { new: true }
-  )
+  addOrEditQuestion(rest, game)
     .then((g) => res.status(201).json(g.questions.slice(-1)[0]))
     .catch(next);
 });
@@ -78,18 +71,9 @@ router.put("/game/:id/question/:questionId/answer", (req, res, next) => {
 });
 
 router.put("/question/:id/edit", (req, res, next) => {
-  const { game, question, answers, points, category } = req.body;
-  Game.findOneAndUpdate(
-    { _id: game, "questions._id": req.params.id },
-    {
-      $set: {
-        "questions.$.question": question,
-        "questions.$.answers": answers,
-        "questions.$.points": points,
-        "questions.$.category": category,
-      },
-    }
-  )
+  const { game, ...rest } = req.body;
+
+  addOrEditQuestion(rest, game, req.params.id)
     .then(() => res.status(204).send())
     .catch(next);
 });

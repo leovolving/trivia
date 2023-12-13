@@ -44,6 +44,8 @@ const AdminTable = () => {
       .catch(console.error);
   };
 
+  console.log({ questions, categories });
+
   return (
     <>
       <Button
