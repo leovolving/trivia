@@ -40,15 +40,17 @@ const ContextWrapper = ({ children }) => {
     }
   };
 
+  const sendWebSocketMessage = (type, data = {}) => {
+    webSocket.current.send(JSON.stringify({ type, ...data }));
+  };
+
   const openGame = (key, isCode = false, joiningAsAdmin = true) => {
-    webSocket.current.send(
-      JSON.stringify({
-        type: MESSAGE_TYPES.CLIENT_JOIN_GAME,
-        key,
-        isCode,
-        isAdmin: joiningAsAdmin,
-      })
-    );
+    const data = {
+      key,
+      isCode,
+      isAdmin: joiningAsAdmin,
+    };
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_JOIN_GAME, data);
 
     // TODO: set admin via WS response message (or put this in try/catch maybe)
     setAdmin(joiningAsAdmin);
@@ -101,7 +103,7 @@ const ContextWrapper = ({ children }) => {
     setTeams,
     openGame,
     resetSubDocuments,
-    ws: webSocket.current,
+    sendWebSocketMessage,
   };
   return <Context.Provider value={context}>{children}</Context.Provider>;
 };

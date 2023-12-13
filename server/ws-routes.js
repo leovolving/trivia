@@ -1,8 +1,21 @@
 const { MESSAGE_TYPES } = require("./constants");
 
-const { getGameByCode, getGameById } = require("./model-helpers");
+const {
+  createNewGame,
+  getGameByCode,
+  getGameById,
+} = require("./model-helpers");
 
 const wsRoutes = {
+  [MESSAGE_TYPES.CLIENT_CREATE_GAME]: {
+    responseMessage: MESSAGE_TYPES.SERVER_GAME_OBJECT,
+    fn: async (_, ws) => {
+      const newGame = await createNewGame();
+      ws.gameCode = newGame.gameCode;
+      ws.isAdmin = newGame.isAdmin;
+      return newGame;
+    },
+  },
   [MESSAGE_TYPES.CLIENT_JOIN_GAME]: {
     responseMessage: MESSAGE_TYPES.SERVER_GAME_OBJECT,
     fn: async (data, ws) => {

@@ -17,12 +17,19 @@ import {
 } from "@mui/material";
 
 import { endpoint, json } from "../utils";
-import { VIEWS } from "../constants";
+import { MESSAGE_TYPES, VIEWS } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const Menu = () => {
-  const { setAdmin, adminGames, setAdminGames, setGameId, setView, openGame } =
-    useAppContext();
+  const {
+    setAdmin,
+    adminGames,
+    setAdminGames,
+    setGameId,
+    setView,
+    openGame,
+    sendWebSocketMessage,
+  } = useAppContext();
 
   const [gameCode, setGameCode] = useState("");
   const [adminSwitchOn, setAdminSwitchOn] = useState(false);
@@ -32,15 +39,7 @@ const Menu = () => {
   };
 
   const createNewGame = () => {
-    return fetch(endpoint("game/new"), { method: "POST" })
-      .then(json)
-      .then((g) => {
-        setGameId(g._id);
-        setAdminGames([...adminGames, g]);
-        setAdmin(true);
-        setView(VIEWS.admin);
-      })
-      .catch(console.error);
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_CREATE_GAME);
   };
 
   const onTextFieldChange = (event) => {

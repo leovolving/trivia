@@ -2,12 +2,16 @@ const { Router } = require("express");
 
 const { Game } = require("./models");
 const helpers = require("./helpers");
-const { getGameByCode, getGameById } = require("./model-helpers");
+const {
+  createNewGame,
+  getGameByCode,
+  getGameById,
+} = require("./model-helpers");
 
 const router = new Router();
 
 router.post("/game/new", (_, res, next) => {
-  Game.create({ code: helpers.generateCode() })
+  createNewGame()
     .then((game) => res.status(201).json(game))
     .catch(next);
 });
