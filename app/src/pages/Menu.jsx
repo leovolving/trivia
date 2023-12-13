@@ -16,20 +16,11 @@ import {
   Typography,
 } from "@mui/material";
 
-import { endpoint, json } from "../utils";
-import { MESSAGE_TYPES, VIEWS } from "../constants";
+import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const Menu = () => {
-  const {
-    setAdmin,
-    adminGames,
-    setAdminGames,
-    setGameId,
-    setView,
-    openGame,
-    sendWebSocketMessage,
-  } = useAppContext();
+  const { adminGames, openGame, sendWebSocketMessage } = useAppContext();
 
   const [gameCode, setGameCode] = useState("");
   const [adminSwitchOn, setAdminSwitchOn] = useState(false);
