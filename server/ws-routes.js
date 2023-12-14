@@ -59,7 +59,7 @@ const wsRoutes = {
       const { gameId, questionId } = data;
       const status = { isAnswered: true, isActive: false };
       const g = await updateQuestionStatus(gameId, questionId, status);
-      return g.questions.find((q) => q.id === questionId);
+      return g.questions.id(questionId);
     },
   },
   [MESSAGE_TYPES.CLIENT_QUESTION_FORM]: {
@@ -96,7 +96,7 @@ const wsRoutes = {
     fn: async (data) => {
       const { gameId, teamId, newPoints } = data;
       const g = await addTeamPoints(gameId, teamId, newPoints);
-      return g.teams.find((t) => t.id === teamId);
+      return g.teams.id(teamId);
     },
   },
 };
