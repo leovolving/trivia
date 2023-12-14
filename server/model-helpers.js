@@ -58,16 +58,24 @@ const getGameByCode = async (code) => await Game.findOne({ code });
 const getGameById = async (id) => await Game.findById(id);
 
 const resetGame = async (id) => {
+  // TODO: update all
   return await Game.findByIdAndUpdate(
     id,
     {
       $set: {
         "questions.$[x].isAnswered": false,
-        "questions.$[x].isActive": false,
-        "teams.$.points": 0,
+        "questions.$[y].isActive": false,
+        "teams.$[z].points": 0,
       },
     },
-    { new: true }
+    {
+      new: true,
+      arrayFilters: [
+        { "x.isAnswered": true },
+        { "y.isActive": true },
+        { "z.score": { $gte: 0 } },
+      ],
+    }
   );
 };
 

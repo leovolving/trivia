@@ -105,7 +105,6 @@ const wsRoutes = {
     // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_RESET_GAME,
     fn: async (data) => {
-      console.log({ data });
       return await resetGame(data.gameId);
     },
   },
