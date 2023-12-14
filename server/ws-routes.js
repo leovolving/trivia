@@ -4,9 +4,11 @@ const {
   addCategory,
   addOrEditQuestion,
   addTeam,
+  addTeamPoints,
   createNewGame,
   getGameByCode,
   getGameById,
+  updateQuestionStatus,
 } = require("./model-helpers");
 
 const wsRoutes = {
@@ -50,6 +52,16 @@ const wsRoutes = {
       return getGameFn(data.key);
     },
   },
+  [MESSAGE_TYPES.CLIENT_QUESTION_ANSWERED]: {
+    // TODO: send to all game participants
+    responseMessage: MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED,
+    fn: async (data) => {
+      const { gameId, questionId } = data;
+      const status = { isAnswered: true, isActive: false };
+      const g = await updateQuestionStatus(gameId, questionId, status);
+      return g.questions.find((q) => q.id === questionId);
+    },
+  },
   [MESSAGE_TYPES.CLIENT_QUESTION_FORM]: {
     // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_QUESTION_RESPONSE,
@@ -76,6 +88,15 @@ const wsRoutes = {
         newCategory,
         questions: game.questions,
       };
+    },
+  },
+  [MESSAGE_TYPES.CLIENT_TEAM_ADD_POINTS]: {
+    // TODO: send to all game participants
+    responseMessage: MESSAGE_TYPES.SERVER_TEAM_POINTS_UPDATED,
+    fn: async (data) => {
+      const { gameId, teamId, newPoints } = data;
+      const g = await addTeamPoints(gameId, teamId, newPoints);
+      return g.teams.find((t) => t.id === teamId);
     },
   },
 };

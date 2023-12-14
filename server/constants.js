@@ -3,11 +3,15 @@ const MESSAGE_TYPES = {
   CLIENT_ADD_TEAM: "add-team",
   CLIENT_CREATE_GAME: "create",
   CLIENT_JOIN_GAME: "join",
+  CLIENT_QUESTION_ANSWERED: "question-answered",
   CLIENT_QUESTION_FORM: "question-form",
+  CLIENT_TEAM_ADD_POINTS: "add-points",
   SERVER_GAME_OBJECT: "game",
   SERVER_NEW_CATEGORY: "new-category",
   SERVER_NEW_TEAM: "new-team",
   SERVER_QUESTION_RESPONSE: "question-response",
+  SERVER_QUESTION_STATUS_UPDATED: "question-status-updated",
+  SERVER_TEAM_POINTS_UPDATED: "team-points-updated",
 };
 
 const DATABASE_URL =

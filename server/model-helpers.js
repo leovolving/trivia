@@ -38,17 +38,38 @@ const addTeam = async (gameId, teamName) =>
     { new: true }
   );
 
+const addTeamPoints = async (gameId, teamId, additionalPoints) =>
+  await Game.findOneAndUpdate(
+    { _id: gameId, "teams._id": teamId },
+    { $inc: { "teams.$.points": additionalPoints } },
+    { new: true }
+  );
+
 const createNewGame = async () => Game.create({ code: helpers.generateCode() });
 
 const getGameByCode = async (code) => await Game.findOne({ code });
 
 const getGameById = async (id) => await Game.findById(id);
 
+const updateQuestionStatus = async (gameId, questionId, status) =>
+  await Game.findOneAndUpdate(
+    { _id: gameId, "questions._id": questionId },
+    {
+      $set: {
+        "questions.$.isAnswered": status.isAnswered,
+        "questions.$.isActive": status.isActive,
+      },
+    },
+    { new: true }
+  );
+
 module.exports = {
   addOrEditQuestion,
   addCategory,
   addTeam,
+  addTeamPoints,
   createNewGame,
   getGameByCode,
   getGameById,
+  updateQuestionStatus,
 };

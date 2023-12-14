@@ -8,6 +8,7 @@ const {
   createNewGame,
   getGameByCode,
   getGameById,
+  updateQuestionStatus,
 } = require("./model-helpers");
 
 const router = new Router();
@@ -54,19 +55,16 @@ router.get("/game/code/:code", (req, res, next) => {
 
 router.put("/team/add-points", (req, res, next) => {
   const { id, points, game } = req.body;
-  Game.findOneAndUpdate(
-    { _id: game, "teams._id": id },
-    { $inc: { "teams.$.points": points } }
-  )
+  addTeamPoints(game, id, points)
     .then(() => res.status(204).send())
     .catch(next);
 });
 
 router.put("/game/:id/question/:questionId/answer", (req, res, next) => {
-  Game.findOneAndUpdate(
-    { _id: req.params.id, "questions._id": req.params.questionId },
-    { $set: { "questions.$.isAnswered": true, "questions.$.isActive": false } }
-  )
+  updateQuestionStatus(req.params.id, req.params.questionId, {
+    isAnswered: true,
+    isActive: false,
+  })
     .then(() => res.status(204).send())
     .catch(next);
 });

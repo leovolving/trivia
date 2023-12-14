@@ -69,6 +69,20 @@ const ContextWrapper = ({ children }) => {
     [MESSAGE_TYPES.SERVER_NEW_TEAM]: (newTeam) => {
       setTeams((prev) => [...prev, transformId(newTeam)]);
     },
+    [MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED]: ({
+      _id,
+      isActive,
+      isAnswered,
+    }) => {
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === _id ? { ...q, isAnswered, isActive } : q))
+      );
+    },
+    [MESSAGE_TYPES.SERVER_TEAM_POINTS_UPDATED]: ({ _id, points }) => {
+      setTeams((prev) =>
+        prev.map((t) => (t.id === _id ? { ...t, points } : t))
+      );
+    },
   };
 
   useEffect(() => {

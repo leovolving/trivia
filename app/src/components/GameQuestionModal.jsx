@@ -9,11 +9,11 @@ import {
 
 import { Modal } from "../_ds";
 
-import { endpoint, headers } from "../utils";
+import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const GameQuestionModal = ({ questionId, onClose }) => {
-  const { questions, setQuestions, categories, teams, setTeams, gameId } =
+  const { questions, categories, teams, gameId, sendWebSocketMessage } =
     useAppContext();
 
   const [correctTeams, setCorrectTeams] = useState([]);
@@ -22,37 +22,20 @@ const GameQuestionModal = ({ questionId, onClose }) => {
   const question = questions.find((q) => q.id === questionId);
 
   const setIsAnswered = async () => {
-    const pointsAwarded = correctTeams.map(({ id }) =>
-      fetch(endpoint("team/add-points"), {
-        method: "PUT",
-        headers,
-        body: JSON.stringify({ id, game: gameId, points: question.points }),
-      }).catch(console.error)
-    );
-
-    await Promise.all(pointsAwarded).then(() => {
-      const updatedTeams = teams.map((t) => {
-        if (correctTeams.findIndex(({ id }) => id === t.id) >= 0) {
-          t.points += question.points;
-        }
-        return t;
+    correctTeams.forEach(({ id }) => {
+      sendWebSocketMessage(MESSAGE_TYPES.CLIENT_TEAM_ADD_POINTS, {
+        gameId,
+        teamId: id,
+        newPoints: question.points,
       });
-      setTeams(updatedTeams);
     });
 
-    fetch(endpoint(`game/${gameId}/question/${question.id}/answer`), {
-      method: "PUT",
-    })
-      .then(() => {
-        const updatedQuestions = questions.map((q) => ({
-          ...q,
-          isAnswered: q.id === questionId || !!q.isAnswered,
-        }));
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_QUESTION_ANSWERED, {
+      gameId,
+      questionId,
+    });
 
-        setQuestions(updatedQuestions);
-        close();
-      })
-      .catch(console.log);
+    close();
   };
 
   const category = categories.find((c) => c.id === question.category);
