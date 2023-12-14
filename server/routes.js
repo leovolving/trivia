@@ -6,6 +6,7 @@ const {
   addOrEditQuestion,
   addTeam,
   createNewGame,
+  deleteQuestion,
   getGameByCode,
   getGameById,
   updateQuestionStatus,
@@ -98,9 +99,7 @@ router.put("/game/:id/reset", async (req, res, next) => {
 });
 
 router.delete("/game/:id/question/:questionId", async (req, res, next) => {
-  const game = await getGameById(req.params.id);
-  game.questions.id(req.params.questionId).remove();
-  game.save((err) => {
+  deleteQuestion(req.params.id, req.params.questionId, (err) => {
     if (err) return next(err);
     res.status(204).send();
   });

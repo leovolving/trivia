@@ -47,6 +47,12 @@ const addTeamPoints = async (gameId, teamId, additionalPoints) =>
 
 const createNewGame = async () => Game.create({ code: helpers.generateCode() });
 
+const deleteQuestion = async (gameId, questionId, callback = () => {}) => {
+  const game = await getGameById(gameId);
+  game.questions.id(questionId).remove();
+  game.save(callback);
+};
+
 const getGameByCode = async (code) => await Game.findOne({ code });
 
 const getGameById = async (id) => await Game.findById(id);
@@ -69,6 +75,7 @@ module.exports = {
   addTeam,
   addTeamPoints,
   createNewGame,
+  deleteQuestion,
   getGameByCode,
   getGameById,
   updateQuestionStatus,

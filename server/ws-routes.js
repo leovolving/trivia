@@ -6,6 +6,7 @@ const {
   addTeam,
   addTeamPoints,
   createNewGame,
+  deleteQuestion,
   getGameByCode,
   getGameById,
   updateQuestionStatus,
@@ -37,6 +38,15 @@ const wsRoutes = {
       ws.gameCode = newGame.gameCode;
       ws.isAdmin = newGame.isAdmin;
       return newGame;
+    },
+  },
+  [MESSAGE_TYPES.CLIENT_DELETE_QUESTION]: {
+    // TODO: send to all game participants
+    responseMessage: MESSAGE_TYPES.SERVER_QUESTION_DELETED,
+    fn: async (data) => {
+      const { gameId, questionId } = data;
+      await deleteQuestion(gameId, questionId);
+      return { questionId };
     },
   },
   [MESSAGE_TYPES.CLIENT_JOIN_GAME]: {

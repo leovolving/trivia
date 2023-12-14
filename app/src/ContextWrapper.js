@@ -69,6 +69,9 @@ const ContextWrapper = ({ children }) => {
     [MESSAGE_TYPES.SERVER_NEW_TEAM]: (newTeam) => {
       setTeams((prev) => [...prev, transformId(newTeam)]);
     },
+    [MESSAGE_TYPES.SERVER_QUESTION_DELETED]: ({ questionId }) => {
+      setQuestions((prev) => prev.filter((q) => q.id !== questionId));
+    },
     [MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED]: ({
       _id,
       isActive,
