@@ -3,6 +3,7 @@ const { MESSAGE_TYPES } = require("./constants");
 const {
   addCategory,
   addOrEditQuestion,
+  addTeam,
   createNewGame,
   getGameByCode,
   getGameById,
@@ -16,6 +17,15 @@ const wsRoutes = {
       const { game, label } = data;
       const g = await addCategory(game, label);
       return g.categories.slice(-1)[0];
+    },
+  },
+  [MESSAGE_TYPES.CLIENT_ADD_TEAM]: {
+    // TODO: send to all game participants
+    responseMessage: MESSAGE_TYPES.SERVER_NEW_TEAM,
+    fn: async (data) => {
+      const { gameId, teamName } = data;
+      const g = await addTeam(gameId, teamName);
+      return g.teams.slice(-1)[0];
     },
   },
   [MESSAGE_TYPES.CLIENT_CREATE_GAME]: {

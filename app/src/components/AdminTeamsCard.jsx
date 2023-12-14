@@ -4,11 +4,11 @@ import { Button, Card, TextField, Typography } from "@mui/material";
 
 import { LoadingButton, Modal } from "../_ds";
 
-import { transformId, endpoint, json, headers } from "../utils";
+import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const AdminTeamsCard = () => {
-  const { teams, setTeams, gameId } = useAppContext();
+  const { teams, gameId, sendWebSocketMessage } = useAppContext();
 
   const [isLoading, setLoading] = useState(false);
   const [isAddTeamsModalOpen, setAddTeamsModalOpen] = useState(false);
@@ -23,24 +23,14 @@ const AdminTeamsCard = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    const addedTeams = teamInputs.filter(Boolean).map((name) =>
-      fetch(endpoint("team/new"), {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ name, game: gameId }),
-      })
-        .then(json)
-        .catch(console.error)
-    );
 
-    Promise.all(addedTeams)
-      .then((res) => {
-        setTeams([...teams, ...res.map(transformId)]);
-        setTeamInputs([]);
-        setAddTeamsModalOpen(false);
-      })
-      .catch(console.error)
-      .finally(setLoading(false));
+    teamInputs.filter(Boolean).forEach((teamName) => {
+      sendWebSocketMessage(MESSAGE_TYPES.CLIENT_ADD_TEAM, { teamName, gameId });
+    });
+
+    setTeamInputs([]);
+    setLoading(false);
+    setAddTeamsModalOpen(false);
   };
   return (
     <Card sx={{ padding: "16px" }}>

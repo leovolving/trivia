@@ -4,6 +4,7 @@ const { Game } = require("./models");
 const {
   addCategory,
   addOrEditQuestion,
+  addTeam,
   createNewGame,
   getGameByCode,
   getGameById,
@@ -33,7 +34,7 @@ router.post("/question/new", (req, res, next) => {
 
 router.post("/team/new", (req, res, next) => {
   const { game, name } = req.body;
-  Game.findByIdAndUpdate(game, { $push: { teams: { name } } }, { new: true })
+  addTeam(game, name)
     .then((g) => res.status(201).json(g.teams.slice(-1)[0]))
     .catch(next);
 });

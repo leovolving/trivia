@@ -31,6 +31,13 @@ const addOrEditQuestion = async (q, gameId, questionId) => {
   }
 };
 
+const addTeam = async (gameId, teamName) =>
+  await Game.findByIdAndUpdate(
+    gameId,
+    { $push: { teams: { name: teamName } } },
+    { new: true }
+  );
+
 const createNewGame = async () => Game.create({ code: helpers.generateCode() });
 
 const getGameByCode = async (code) => await Game.findOne({ code });
@@ -40,6 +47,7 @@ const getGameById = async (id) => await Game.findById(id);
 module.exports = {
   addOrEditQuestion,
   addCategory,
+  addTeam,
   createNewGame,
   getGameByCode,
   getGameById,

@@ -66,6 +66,9 @@ const ContextWrapper = ({ children }) => {
       }
       setQuestions(data.questions.map(transformId));
     },
+    [MESSAGE_TYPES.SERVER_NEW_TEAM]: (newTeam) => {
+      setTeams((prev) => [...prev, transformId(newTeam)]);
+    },
   };
 
   useEffect(() => {
