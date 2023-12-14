@@ -9,6 +9,7 @@ const {
   deleteQuestion,
   getGameByCode,
   getGameById,
+  resetGame,
   updateQuestionStatus,
 } = require("./model-helpers");
 
@@ -98,6 +99,14 @@ const wsRoutes = {
         newCategory,
         questions: game.questions,
       };
+    },
+  },
+  [MESSAGE_TYPES.CLIENT_RESET_GAME]: {
+    // TODO: send to all game participants
+    responseMessage: MESSAGE_TYPES.SERVER_RESET_GAME,
+    fn: async (data) => {
+      console.log({ data });
+      return await resetGame(data.gameId);
     },
   },
   [MESSAGE_TYPES.CLIENT_TEAM_ADD_POINTS]: {

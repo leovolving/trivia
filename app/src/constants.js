@@ -12,6 +12,7 @@ export const MESSAGE_TYPES = {
   CLIENT_JOIN_GAME: "join",
   CLIENT_QUESTION_ANSWERED: "question-answered",
   CLIENT_QUESTION_FORM: "question-form",
+  CLIENT_RESET_GAME: "reset-game-request",
   CLIENT_TEAM_ADD_POINTS: "add-points",
   SERVER_GAME_OBJECT: "game",
   SERVER_NEW_CATEGORY: "new-category",
@@ -19,5 +20,6 @@ export const MESSAGE_TYPES = {
   SERVER_QUESTION_DELETED: "question-deleted",
   SERVER_QUESTION_RESPONSE: "question-response",
   SERVER_QUESTION_STATUS_UPDATED: "question-status-updated",
+  SERVER_RESET_GAME: "game-reset",
   SERVER_TEAM_POINTS_UPDATED: "team-points-updated",
 };

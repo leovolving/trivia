@@ -57,6 +57,20 @@ const getGameByCode = async (code) => await Game.findOne({ code });
 
 const getGameById = async (id) => await Game.findById(id);
 
+const resetGame = async (id) => {
+  return await Game.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        "questions.$[x].isAnswered": false,
+        "questions.$[x].isActive": false,
+        "teams.$.points": 0,
+      },
+    },
+    { new: true }
+  );
+};
+
 const updateQuestionStatus = async (gameId, questionId, status) =>
   await Game.findOneAndUpdate(
     { _id: gameId, "questions._id": questionId },
@@ -78,5 +92,6 @@ module.exports = {
   deleteQuestion,
   getGameByCode,
   getGameById,
+  resetGame,
   updateQuestionStatus,
 };

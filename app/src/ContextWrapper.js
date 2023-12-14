@@ -81,6 +81,7 @@ const ContextWrapper = ({ children }) => {
         prev.map((q) => (q.id === _id ? { ...q, isAnswered, isActive } : q))
       );
     },
+    [MESSAGE_TYPES.SERVER_RESET_GAME]: resetSubDocuments,
     [MESSAGE_TYPES.SERVER_TEAM_POINTS_UPDATED]: ({ _id, points }) => {
       setTeams((prev) =>
         prev.map((t) => (t.id === _id ? { ...t, points } : t))

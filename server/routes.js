@@ -1,6 +1,5 @@
 const { Router } = require("express");
 
-const { Game } = require("./models");
 const {
   addCategory,
   addOrEditQuestion,
@@ -9,6 +8,7 @@ const {
   deleteQuestion,
   getGameByCode,
   getGameById,
+  resetGame,
   updateQuestionStatus,
 } = require("./model-helpers");
 
@@ -79,21 +79,7 @@ router.put("/question/:id/edit", (req, res, next) => {
 });
 
 router.put("/game/:id/reset", async (req, res, next) => {
-  const game = await getGameById(req.params.id);
-  const teams = game.teams.map((t) => ({
-    ...t,
-    _doc: { ...t._doc, points: 0 },
-  }));
-  const questions = game.questions.map((q) => ({
-    ...q,
-    _doc: { ...q._doc, isAnswered: false, isActive: false },
-  }));
-
-  Game.findByIdAndUpdate(
-    req.params.id,
-    { $set: { questions, teams } },
-    { new: true }
-  )
+  return resetGame(req.params.id)
     .then((g) => res.status(200).send(g))
     .catch(next);
 });

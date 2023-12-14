@@ -8,8 +8,7 @@ import {
 
 import { Admin, Game, Menu } from "./pages";
 
-import { VIEWS } from "./constants";
-import { endpoint, json } from "./utils";
+import { MESSAGE_TYPES, VIEWS } from "./constants";
 import { useAppContext } from "./ContextWrapper";
 
 import "./index.css";
@@ -24,6 +23,7 @@ const App = () => {
     setView,
     resetSubDocuments,
     adminGames,
+    sendWebSocketMessage,
   } = useAppContext();
 
   const toggleAdmin = () => {
@@ -32,14 +32,11 @@ const App = () => {
 
   const resetGame = () => {
     const resetWarning =
-      "Resetting game will mark all questions as unanswered and remove all teams. Are you sure?";
+      "Resetting game will mark all questions as unanswered and reset all teams' points to 0. Are you sure?";
 
-    if (!window.confirm(resetWarning)) return null;
-
-    fetch(endpoint(`game/${gameId}/reset`), { method: "PUT" })
-      .then(json)
-      .then(resetSubDocuments)
-      .catch(console.error);
+    if (window.confirm(resetWarning)) {
+      sendWebSocketMessage(MESSAGE_TYPES.CLIENT_RESET_GAME, { gameId });
+    }
   };
 
   const openMenu = () => {
