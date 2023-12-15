@@ -63,18 +63,14 @@ const resetGame = async (id) => {
     id,
     {
       $set: {
-        "questions.$[x].isAnswered": false,
-        "questions.$[y].isActive": false,
-        "teams.$[z].points": 0,
+        "questions.$[].isAnswered": false,
+        "questions.$[].isActive": false,
+        "teams.$[].points": 0,
       },
     },
     {
       new: true,
-      arrayFilters: [
-        { "x.isAnswered": true },
-        { "y.isActive": true },
-        { "z.score": { $gte: 0 } },
-      ],
+      multi: true,
     }
   );
 };
