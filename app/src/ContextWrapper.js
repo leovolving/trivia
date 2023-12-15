@@ -101,7 +101,9 @@ const ContextWrapper = ({ children }) => {
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data);
       console.log(`Calling websocket cb for ${data.type}`);
-      webSocketEventCallbacks[data.type](data.payload);
+      const callback = webSocketEventCallbacks[data.type];
+      if (callback) callback(data.payload);
+      else console.error(`No websocket cb for message type: ${data.type}`);
     });
 
     return () => {
