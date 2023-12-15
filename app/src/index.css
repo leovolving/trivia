@@ -90,6 +90,8 @@ body {
 
 .modal-card {
     min-height: 250px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto !important;
     width: 500px;
     padding: 32px;
     display: flex;
