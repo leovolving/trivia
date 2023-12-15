@@ -83,7 +83,7 @@ const App = () => {
           )}
         </div>
       </Card>
-      {gameId ? <>{view === VIEWS.admin ? <Admin /> : <Game />}</> : <Menu />}
+      {gameId ? view === VIEWS.admin ? <Admin /> : <Game /> : <Menu />}
     </>
   );
 };
