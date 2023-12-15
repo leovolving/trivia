@@ -45,6 +45,13 @@ const addTeamPoints = async (gameId, teamId, additionalPoints) =>
     { new: true }
   );
 
+const addTeamWithCode = async (code, teamName) =>
+  await Game.findOneAndUpdate(
+    { code },
+    { $push: { teams: { name: teamName } } },
+    { new: true }
+  );
+
 const createNewGame = async () => Game.create({ code: helpers.generateCode() });
 
 const deleteQuestion = async (gameId, questionId, callback = () => {}) => {
@@ -92,6 +99,7 @@ module.exports = {
   addCategory,
   addTeam,
   addTeamPoints,
+  addTeamWithCode,
   createNewGame,
   deleteQuestion,
   getGameByCode,

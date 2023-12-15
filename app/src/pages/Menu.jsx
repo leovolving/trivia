@@ -20,9 +20,11 @@ import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const Menu = () => {
-  const { adminGames, openGame, sendWebSocketMessage } = useAppContext();
+  const { adminGames, openGame, sendWebSocketMessage, setAdmin } =
+    useAppContext();
 
   const [gameCode, setGameCode] = useState("");
+  const [teamName, setTeamName] = useState("");
   const [adminSwitchOn, setAdminSwitchOn] = useState(false);
 
   const toggleAdminSwitch = (event) => {
@@ -30,16 +32,26 @@ const Menu = () => {
   };
 
   const createNewGame = () => {
-    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_CREATE_GAME);
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_CREATE_GAME, { isAdmin: true });
+    setAdmin(true);
   };
 
-  const onTextFieldChange = (event) => {
+  const onCodeChange = (event) => {
     const { value } = event.target;
     if (value.length < 5) setGameCode(value.toUpperCase());
   };
 
+  const onTeamNameChange = (event) => {
+    const { value } = event.target;
+    setTeamName(value);
+  };
+
   const joinGame = (e) => {
     e.preventDefault();
+    if (!adminSwitchOn && teamName) {
+      const data = { gameCode, teamName };
+      sendWebSocketMessage(MESSAGE_TYPES.CLIENT_ADD_TEAM_WITH_CODE, data);
+    }
     openGame(gameCode, true, adminSwitchOn);
   };
 
@@ -63,24 +75,40 @@ const Menu = () => {
         <Typography gutterBottom variant="h3">
           Join a Game
         </Typography>
+        <Typography variant="body1" component="p" gutterBottom>
+          Friend sent you here? Enter the 4-character code they provided to join
+          them!
+        </Typography>
         <form onSubmit={joinGame}>
-          <Typography
-            gutterBottom
-            component="label"
-            htmlFor="code"
-            sx={{ display: "block" }}
-          >
-            Enter the 4-character game code to join an existing game.
-          </Typography>
           <div className="menu-join-input">
-            <TextField
-              value={gameCode}
-              onChange={onTextFieldChange}
-              name="code"
-            />
-            <Button variant="outlined" type="submit">
-              Join
-            </Button>
+            <div>
+              <Typography
+                gutterBottom
+                component="label"
+                htmlFor="code"
+                sx={{ display: "block" }}
+              >
+                Code
+              </Typography>
+              <TextField value={gameCode} onChange={onCodeChange} name="code" />
+            </div>
+            {!adminSwitchOn && (
+              <div>
+                <Typography
+                  gutterBottom
+                  component="label"
+                  htmlFor="team"
+                  sx={{ display: "block" }}
+                >
+                  Team name
+                </Typography>
+                <TextField
+                  value={teamName}
+                  onChange={onTeamNameChange}
+                  name="team"
+                />
+              </div>
+            )}
           </div>
           <FormControlLabel
             control={
@@ -90,8 +118,11 @@ const Menu = () => {
                 color="success"
               />
             }
-            label="Admin mode"
+            label="Join as admin"
           />
+          <Button variant="outlined" type="submit" sx={{ display: "block" }}>
+            Join
+          </Button>
         </form>
       </Card>
       <Divider />

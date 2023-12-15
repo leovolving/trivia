@@ -5,6 +5,7 @@ const {
   addOrEditQuestion,
   addTeam,
   addTeamPoints,
+  addTeamWithCode,
   createNewGame,
   deleteQuestion,
   getGameByCode,
@@ -32,12 +33,21 @@ const wsRoutes = {
       return g.teams.slice(-1)[0];
     },
   },
+  [MESSAGE_TYPES.CLIENT_ADD_TEAM_WITH_CODE]: {
+    // TODO: send to all game participants
+    responseMessage: MESSAGE_TYPES.SERVER_NEW_TEAM,
+    fn: async (data) => {
+      const { gameCode, teamName } = data;
+      const g = await addTeamWithCode(gameCode, teamName);
+      return g.teams.slice(-1)[0];
+    },
+  },
   [MESSAGE_TYPES.CLIENT_CREATE_GAME]: {
     responseMessage: MESSAGE_TYPES.SERVER_GAME_OBJECT,
-    fn: async (_, ws) => {
+    fn: async (data, ws) => {
       const newGame = await createNewGame();
-      ws.gameCode = newGame.gameCode;
-      ws.isAdmin = newGame.isAdmin;
+      ws.gameCode = newGame.code;
+      ws.isAdmin = data.isAdmin;
       return newGame;
     },
   },
@@ -53,11 +63,10 @@ const wsRoutes = {
   [MESSAGE_TYPES.CLIENT_JOIN_GAME]: {
     responseMessage: MESSAGE_TYPES.SERVER_GAME_OBJECT,
     fn: async (data, ws) => {
+      ws.gameCode = data.gameCode;
+      ws.isAdmin = data.isAdmin;
       let getGameFn;
       if (data.isCode) {
-        // TODO: maybe also set when not isCode?
-        ws.gameCode = data.gameCode;
-        ws.isAdmin = data.isAdmin;
         getGameFn = getGameByCode;
       } else getGameFn = getGameById;
       return getGameFn(data.key);

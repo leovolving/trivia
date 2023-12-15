@@ -1,6 +1,7 @@
 const MESSAGE_TYPES = {
   CLIENT_ADD_CATEGORY: "add-category",
   CLIENT_ADD_TEAM: "add-team",
+  CLIENT_ADD_TEAM_WITH_CODE: "add-team-with-code",
   CLIENT_CREATE_GAME: "create",
   CLIENT_DELETE_QUESTION: "delete-question",
   CLIENT_JOIN_GAME: "join",
