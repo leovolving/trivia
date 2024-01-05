@@ -15,6 +15,14 @@ const {
 } = require("./model-helpers");
 
 const wsRoutes = {
+  [MESSAGE_TYPES.CLIENT_ACTIVATED_QUESTION]: {
+    responseMessage: MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED,
+    fn: async ({ isActive, questionId }, ws) => {
+      const status = { isAnswered: false, isActive };
+      const g = await updateQuestionStatus(ws.gameId, questionId, status);
+      return g.questions.id(questionId);
+    },
+  },
   [MESSAGE_TYPES.CLIENT_ADD_CATEGORY]: {
     // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_NEW_CATEGORY,
@@ -69,7 +77,9 @@ const wsRoutes = {
       if (data.isCode) {
         getGameFn = getGameByCode;
       } else getGameFn = getGameById;
-      return getGameFn(data.key);
+      const game = await getGameFn(data.key);
+      ws.gameId = game.id;
+      return game;
     },
   },
   [MESSAGE_TYPES.CLIENT_QUESTION_ANSWERED]: {

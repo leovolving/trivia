@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Button,
@@ -9,12 +9,14 @@ import {
 } from "@mui/material";
 
 import { GameQuestionModal, Scoreboard } from "../components";
+import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const Game = () => {
-  const { categories, questions, isAdmin } = useAppContext();
+  const { categories, questions, isAdmin, sendWebSocketMessage } =
+    useAppContext();
 
-  const [openQuestion, setOpenQuestion] = useState(null);
+  const [openQuestion, setOpenQuestion] = useState(undefined);
   const [isScoreboardOpen, setScoreboardOpen] = useState(false);
 
   const activeCategories = categories.filter((c) =>
@@ -26,6 +28,28 @@ const Game = () => {
       .filter((q) => q.category === categoryId)
       .sort((a, b) => a.points - b.points);
   };
+
+  const wsQuestionActivation = (questionId, isActive) => {
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_ACTIVATED_QUESTION, {
+      questionId,
+      isActive,
+    });
+  };
+
+  const handleClose = () => {
+    const { isAnswered } = questions.find((q) => q.id === openQuestion);
+    if (isAnswered) setOpenQuestion(undefined);
+    else wsQuestionActivation(openQuestion, false);
+  };
+
+  const handleQuestionClick = (q) => {
+    if (q.isAnswered) setOpenQuestion(q.id);
+    else wsQuestionActivation(q.id, true);
+  };
+
+  useEffect(() => {
+    setOpenQuestion(questions.find((q) => q.isActive)?.id);
+  }, [questions]);
 
   return (
     <>
@@ -50,7 +74,7 @@ const Game = () => {
                   <li className="game-questions" key={q.id}>
                     <Card className=".game-question">
                       <CardActionArea
-                        onClick={() => setOpenQuestion(q.id)}
+                        onClick={() => handleQuestionClick(q)}
                         className={
                           q.isAnswered ? "game-question__answered" : ""
                         }
@@ -68,10 +92,7 @@ const Game = () => {
           ))}
         </ul>
       </Card>
-      <GameQuestionModal
-        questionId={openQuestion}
-        onClose={() => setOpenQuestion(null)}
-      />
+      <GameQuestionModal questionId={openQuestion} onClose={handleClose} />
       <Scoreboard
         isOpen={isScoreboardOpen}
         onClose={() => setScoreboardOpen(false)}

@@ -35,13 +35,12 @@ const GameQuestionModal = ({ questionId, onClose }) => {
       questionId,
     });
 
-    close();
+    setCorrectTeams([]);
   };
 
   const category = categories.find((c) => c.id === question.category);
 
   const close = () => {
-    setCorrectTeams([]);
     onClose();
   };
 

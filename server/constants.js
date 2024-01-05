@@ -1,4 +1,5 @@
 const MESSAGE_TYPES = {
+  CLIENT_ACTIVATED_QUESTION: "activate-question",
   CLIENT_ADD_CATEGORY: "add-category",
   CLIENT_ADD_TEAM: "add-team",
   CLIENT_ADD_TEAM_WITH_CODE: "add-team-with-code",
