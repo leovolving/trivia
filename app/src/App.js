@@ -9,7 +9,9 @@ import {
 import { Admin, Game, Menu } from "./pages";
 
 import { MESSAGE_TYPES, VIEWS } from "./constants";
+import { useWebSocketCallback } from "./hooks";
 import { useAppContext } from "./ContextWrapper";
+import { transformId } from "./utils";
 
 import "./index.css";
 
@@ -24,6 +26,10 @@ const App = () => {
     resetSubDocuments,
     adminGames,
     sendWebSocketMessage,
+    setupGameState,
+    setCategories,
+    setQuestions,
+    setTeams,
   } = useAppContext();
 
   const toggleAdmin = () => {
@@ -44,6 +50,39 @@ const App = () => {
     setAdmin(false);
     resetSubDocuments();
   };
+
+  const webSocketEventCallbacks = {
+    [MESSAGE_TYPES.SERVER_GAME_OBJECT]: setupGameState,
+    [MESSAGE_TYPES.SERVER_QUESTION_RESPONSE]: (data) => {
+      if (data.newCategory) {
+        setCategories((prev) => [...prev, transformId(data.newCategory)]);
+      }
+      setQuestions(data.questions.map(transformId));
+    },
+    [MESSAGE_TYPES.SERVER_NEW_TEAM]: (newTeam) => {
+      setTeams((prev) => [...prev, transformId(newTeam)]);
+    },
+    [MESSAGE_TYPES.SERVER_QUESTION_DELETED]: ({ questionId }) => {
+      setQuestions((prev) => prev.filter((q) => q.id !== questionId));
+    },
+    [MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED]: ({
+      _id,
+      isActive,
+      isAnswered,
+    }) => {
+      setQuestions((prev) =>
+        prev.map((q) => (q.id === _id ? { ...q, isAnswered, isActive } : q))
+      );
+    },
+    [MESSAGE_TYPES.SERVER_RESET_GAME]: resetSubDocuments,
+    [MESSAGE_TYPES.SERVER_TEAM_POINTS_UPDATED]: ({ _id, points }) => {
+      setTeams((prev) =>
+        prev.map((t) => (t.id === _id ? { ...t, points } : t))
+      );
+    },
+  };
+
+  useWebSocketCallback(webSocketEventCallbacks);
 
   return (
     <>

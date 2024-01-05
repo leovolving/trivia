@@ -24,6 +24,8 @@ const ContextWrapper = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [teams, setTeams] = useState([]);
 
+  const [mostRecentMessage, setMostRecentMessage] = useState({});
+
   const webSocket = useRef({});
 
   const resetSubDocuments = (game = {}) => {
@@ -57,38 +59,6 @@ const ContextWrapper = ({ children }) => {
     setView(joiningAsAdmin ? VIEWS.admin : VIEWS.game);
   };
 
-  // TODO: use a hook to set this up?
-  const webSocketEventCallbacks = {
-    [MESSAGE_TYPES.SERVER_GAME_OBJECT]: setupGameState,
-    [MESSAGE_TYPES.SERVER_QUESTION_RESPONSE]: (data) => {
-      if (data.newCategory) {
-        setCategories((prev) => [...prev, transformId(data.newCategory)]);
-      }
-      setQuestions(data.questions.map(transformId));
-    },
-    [MESSAGE_TYPES.SERVER_NEW_TEAM]: (newTeam) => {
-      setTeams((prev) => [...prev, transformId(newTeam)]);
-    },
-    [MESSAGE_TYPES.SERVER_QUESTION_DELETED]: ({ questionId }) => {
-      setQuestions((prev) => prev.filter((q) => q.id !== questionId));
-    },
-    [MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED]: ({
-      _id,
-      isActive,
-      isAnswered,
-    }) => {
-      setQuestions((prev) =>
-        prev.map((q) => (q.id === _id ? { ...q, isAnswered, isActive } : q))
-      );
-    },
-    [MESSAGE_TYPES.SERVER_RESET_GAME]: resetSubDocuments,
-    [MESSAGE_TYPES.SERVER_TEAM_POINTS_UPDATED]: ({ _id, points }) => {
-      setTeams((prev) =>
-        prev.map((t) => (t.id === _id ? { ...t, points } : t))
-      );
-    },
-  };
-
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:5150");
 
@@ -101,9 +71,7 @@ const ContextWrapper = ({ children }) => {
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data);
       console.log(`Calling websocket cb for ${data.type}`);
-      const callback = webSocketEventCallbacks[data.type];
-      if (callback) callback(data.payload);
-      else console.error(`No websocket cb for message type: ${data.type}`);
+      setMostRecentMessage(data);
     });
 
     return () => {
@@ -133,6 +101,8 @@ const ContextWrapper = ({ children }) => {
     openGame,
     resetSubDocuments,
     sendWebSocketMessage,
+    mostRecentMessage,
+    setupGameState,
   };
   return <Context.Provider value={context}>{children}</Context.Provider>;
 };
