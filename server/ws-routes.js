@@ -24,7 +24,6 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_ADD_CATEGORY]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_NEW_CATEGORY,
     fn: async (data) => {
       const { game, label } = data;
@@ -33,7 +32,6 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_ADD_TEAM]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_NEW_TEAM,
     fn: async (data) => {
       const { gameId, teamName } = data;
@@ -42,7 +40,6 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_ADD_TEAM_WITH_CODE]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_NEW_TEAM,
     fn: async (data) => {
       const { gameCode, teamName } = data;
@@ -51,16 +48,17 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_CREATE_GAME]: {
+    isPrivate: true,
     responseMessage: MESSAGE_TYPES.SERVER_GAME_OBJECT,
     fn: async (data, ws) => {
       const newGame = await createNewGame();
       ws.gameCode = newGame.code;
+      ws.gameId = newGame.id;
       ws.isAdmin = data.isAdmin;
       return newGame;
     },
   },
   [MESSAGE_TYPES.CLIENT_DELETE_QUESTION]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_QUESTION_DELETED,
     fn: async (data) => {
       const { gameId, questionId } = data;
@@ -69,6 +67,7 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_JOIN_GAME]: {
+    isPrivate: true,
     responseMessage: MESSAGE_TYPES.SERVER_GAME_OBJECT,
     fn: async (data, ws) => {
       ws.gameCode = data.gameCode;
@@ -83,7 +82,6 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_QUESTION_ANSWERED]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_QUESTION_STATUS_UPDATED,
     fn: async (data) => {
       const { gameId, questionId } = data;
@@ -93,7 +91,6 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_QUESTION_FORM]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_QUESTION_RESPONSE,
     fn: async (data) => {
       const {
@@ -121,14 +118,12 @@ const wsRoutes = {
     },
   },
   [MESSAGE_TYPES.CLIENT_RESET_GAME]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_RESET_GAME,
     fn: async (data) => {
       return await resetGame(data.gameId);
     },
   },
   [MESSAGE_TYPES.CLIENT_TEAM_ADD_POINTS]: {
-    // TODO: send to all game participants
     responseMessage: MESSAGE_TYPES.SERVER_TEAM_POINTS_UPDATED,
     fn: async (data) => {
       const { gameId, teamId, newPoints } = data;

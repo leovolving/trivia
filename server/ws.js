@@ -1,8 +1,10 @@
-const { WebSocketServer } = require("ws");
+const WebSocket = require("ws");
 const mongoose = require("mongoose");
 
 const { DATABASE_URL } = require("./constants");
 const { wsRoutes } = require("./ws-routes");
+
+const { WebSocketServer } = WebSocket;
 
 const wss = new WebSocketServer({ port: 5150, host: "localhost" }, () => {
   console.log("Server started on port 5150");
@@ -27,12 +29,24 @@ wss.on("connection", (ws, _request) => {
     const data = JSON.parse(_data);
 
     const msgRoute = wsRoutes[data.type];
-    if (msgRoute) {
-      const payload = await msgRoute.fn(data, ws);
-      // TODO: handle responses to more than just the requester
-      ws.send(JSON.stringify({ type: msgRoute.responseMessage, payload }));
-    } else {
+    if (!msgRoute) {
       console.error("No msgRoute", data);
+      return;
+    }
+
+    const payload = await msgRoute.fn(data, ws);
+    const response = JSON.stringify({
+      type: msgRoute.responseMessage,
+      payload,
+    });
+
+    if (msgRoute.isPrivate) ws.send(response);
+    else {
+      wss.clients.forEach((c) => {
+        if (c.gameId === ws.gameId && c.readyState === WebSocket.OPEN) {
+          c.send(response);
+        }
+      });
     }
   });
 });
