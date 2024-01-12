@@ -24,12 +24,14 @@ const App = () => {
     view,
     setView,
     resetSubDocuments,
-    adminGames,
+    recentGames,
     sendWebSocketMessage,
     setupGameState,
     setCategories,
     setQuestions,
+    teams,
     setTeams,
+    setLocalTeamId,
   } = useAppContext();
 
   const toggleAdmin = () => {
@@ -60,6 +62,7 @@ const App = () => {
       setQuestions(data.questions.map(transformId));
     },
     [MESSAGE_TYPES.SERVER_NEW_TEAM]: (newTeam) => {
+      if (!teams.length && !isAdmin) setLocalTeamId(newTeam._id);
       setTeams((prev) => [...prev, transformId(newTeam)]);
     },
     [MESSAGE_TYPES.SERVER_QUESTION_DELETED]: ({ questionId }) => {
@@ -93,7 +96,7 @@ const App = () => {
         <div className="app-card-menu">
           <Typography>
             Game code:{" "}
-            {adminGames.find(({ _id }) => _id === gameId)?.code || "N/A"}
+            {recentGames.find(({ _id }) => _id === gameId)?.code || "N/A"}
           </Typography>
           <Button variant="outlined" onClick={openMenu}>
             Main menu

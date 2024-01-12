@@ -8,8 +8,12 @@ export const json = (res) => res.json();
 export const headers = { "Content-Type": "application/json" };
 
 export const useStorageState = (initialState, formKey) => {
-  const existingState = JSON.parse(localStorage.getItem(formKey));
-  const [state, setState] = useState(existingState || initialState);
+  const existingState = localStorage.getItem(formKey);
+  const initialStateValue =
+    existingState && existingState !== "undefined"
+      ? JSON.parse(existingState)
+      : initialState;
+  const [state, setState] = useState(initialStateValue);
 
   // Persist all state changes to localStorage
   useEffect(() => {

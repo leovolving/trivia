@@ -20,7 +20,7 @@ import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
 const Menu = () => {
-  const { adminGames, openGame, sendWebSocketMessage, setAdmin } =
+  const { recentGames, openGame, sendWebSocketMessage, setAdmin } =
     useAppContext();
 
   const [gameCode, setGameCode] = useState("");
@@ -141,14 +141,16 @@ const Menu = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {adminGames.map((g) => (
+              {recentGames.map((g) => (
                 <TableRow key={g.code}>
                   <TableCell>{g.code}</TableCell>
                   <TableCell>
                     {new Date(g.updatedAt).toLocaleString()}
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => openGame(g._id)}>Join</Button>
+                    <Button onClick={() => openGame(g._id, false, g.isAdmin)}>
+                      Join
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

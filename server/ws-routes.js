@@ -78,7 +78,7 @@ const wsRoutes = {
       } else getGameFn = getGameById;
       const game = await getGameFn(data.key);
       ws.gameId = game.id;
-      return game;
+      return { ...game._doc, isAdmin: data.isAdmin };
     },
   },
   [MESSAGE_TYPES.CLIENT_QUESTION_ANSWERED]: {

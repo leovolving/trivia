@@ -14,15 +14,14 @@ export function useAppContext() {
 }
 
 const ContextWrapper = ({ children }) => {
-  const [adminGames, setAdminGames] = useStorageState([], "adminGames");
+  const [recentGames, setRecentGames] = useStorageState([], "recentGames");
   const [gameId, setGameId] = useStorageState(null, "gameId");
-  const [isAdmin, setAdmin] = useState(
-    adminGames.map(({ _id }) => _id).includes(gameId)
-  );
+  const [isAdmin, setAdmin] = useState(false);
   const [view, setView] = useState(isAdmin ? VIEWS.admin : VIEWS.game);
   const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [teams, setTeams] = useState([]);
+  const [teamId, setLocalTeamId] = useStorageState(null, "teamId");
 
   const [mostRecentMessage, setMostRecentMessage] = useState({});
 
@@ -37,8 +36,11 @@ const ContextWrapper = ({ children }) => {
   const setupGameState = (g) => {
     setGameId(g._id);
     resetSubDocuments(g);
-    if (!adminGames.some(({ _id }) => _id === g._id)) {
-      setAdminGames([...adminGames, g]);
+    if (!recentGames.some(({ _id }) => _id === g._id)) {
+      setRecentGames([
+        ...recentGames,
+        transformId({ ...g, teamId: g.teamId || teamId }),
+      ]);
     }
   };
 
@@ -54,7 +56,6 @@ const ContextWrapper = ({ children }) => {
     };
     sendWebSocketMessage(MESSAGE_TYPES.CLIENT_JOIN_GAME, data);
 
-    // TODO: set admin via WS response message (or put this in try/catch maybe)
     setAdmin(joiningAsAdmin);
     setView(joiningAsAdmin ? VIEWS.admin : VIEWS.game);
   };
@@ -65,7 +66,12 @@ const ContextWrapper = ({ children }) => {
     socket.addEventListener("open", () => {
       webSocket.current = socket;
       // fetch game on load if one is already started
-      if (gameId !== "null" && gameId !== null) openGame(gameId);
+      if (gameId !== "null" && gameId !== null) {
+        console.log({ recentGames, gameId });
+        const game = recentGames.find((g) => g.id === gameId);
+        setLocalTeamId(game.teamId || null);
+        openGame(gameId, false, game.isAdmin);
+      }
     });
 
     socket.addEventListener("message", (event) => {
@@ -84,8 +90,8 @@ const ContextWrapper = ({ children }) => {
   }, []);
 
   const context = {
-    adminGames,
-    setAdminGames,
+    recentGames,
+    setRecentGames,
     gameId,
     setGameId,
     isAdmin,
@@ -103,6 +109,8 @@ const ContextWrapper = ({ children }) => {
     sendWebSocketMessage,
     mostRecentMessage,
     setupGameState,
+    teamId,
+    setLocalTeamId,
   };
   return <Context.Provider value={context}>{children}</Context.Provider>;
 };
