@@ -1,41 +1,29 @@
-import { useState } from "react";
-import {
-  Autocomplete,
-  Button,
-  Box,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { useMemo } from "react";
+import { Box, Typography } from "@mui/material";
 
 import { Modal } from "../_ds";
 
 import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
 
+import { GameQuestionModalAdminForm, GameQuestionModalTeamForm } from ".";
+
 const GameQuestionModal = ({ questionId, onClose }) => {
-  const { questions, categories, teams, gameId, sendWebSocketMessage } =
+  const { isAdmin, questions, categories, gameId, sendWebSocketMessage } =
     useAppContext();
 
-  const [correctTeams, setCorrectTeams] = useState([]);
+  const question = useMemo(
+    () => questions.find((q) => q.id === questionId),
+    [questionId, questions]
+  );
+
   if (!questionId) return null;
-  const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
-  const question = questions.find((q) => q.id === questionId);
-
-  const setIsAnswered = async () => {
-    correctTeams.forEach(({ id }) => {
-      sendWebSocketMessage(MESSAGE_TYPES.CLIENT_TEAM_ADD_POINTS, {
-        gameId,
-        teamId: id,
-        newPoints: question.points,
-      });
-    });
-
-    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_QUESTION_ANSWERED, {
+  const addTeamPoints = (teamId) => {
+    sendWebSocketMessage(MESSAGE_TYPES.CLIENT_TEAM_ADD_POINTS, {
       gameId,
-      questionId,
+      teamId,
+      newPoints: question.points,
     });
-
-    setCorrectTeams([]);
   };
 
   const category = categories.find((c) => c.id === question.category);
@@ -44,9 +32,7 @@ const GameQuestionModal = ({ questionId, onClose }) => {
     onClose();
   };
 
-  const onAutocompleteChange = (_, value) => {
-    setCorrectTeams(value);
-  };
+  const correctAnswerProvided = (q) => typeof q.correct === "number";
 
   return (
     <Modal open onClose={close}>
@@ -60,47 +46,20 @@ const GameQuestionModal = ({ questionId, onClose }) => {
         <Typography>Category: {category.label}</Typography>
         <Typography>{question.points} points</Typography>
       </Box>
-      <Typography variant="h4">{question.question}</Typography>
-      <ul className="answer-options-list">
-        {question.answers.map((a, i) => (
-          <Typography
-            key={`answer-${i}-${question.id}`}
-            variant="h5"
-            component="li"
-          >
-            {a}
-          </Typography>
-        ))}
-      </ul>
-      <Typography variant="h5">Correct teams</Typography>
-      <Autocomplete
-        options={sortedTeams}
-        getOptionLabel={(o) => o.name}
-        multiple
-        filterSelectedOptions
-        disableCloseOnSelect
-        value={correctTeams}
-        onChange={onAutocompleteChange}
-        renderInput={(params) => <TextField {...params} />}
-        ListboxProps={{ style: { maxHeight: 100 } }}
-        componentsProps={{
-          popper: {
-            modifiers: [
-              {
-                name: "flip",
-                options: {
-                  fallbackPlacements: [],
-                },
-              },
-            ],
-          },
-        }}
-      />
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Button onClick={setIsAnswered} variant="outlined">
-          Complete question and close
-        </Button>
-      </Box>
+      <Typography variant="h4" id="question-label">
+        {question.question}
+      </Typography>
+      {isAdmin || !correctAnswerProvided(question) ? (
+        <GameQuestionModalAdminForm
+          addTeamPoints={addTeamPoints}
+          question={question}
+        />
+      ) : (
+        <GameQuestionModalTeamForm
+          addTeamPoints={addTeamPoints}
+          question={question}
+        />
+      )}
     </Modal>
   );
 };

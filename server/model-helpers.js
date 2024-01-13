@@ -65,7 +65,6 @@ const getGameByCode = async (code) => await Game.findOne({ code });
 const getGameById = async (id) => await Game.findById(id);
 
 const resetGame = async (id) => {
-  // TODO: update all
   return await Game.findByIdAndUpdate(
     id,
     {
