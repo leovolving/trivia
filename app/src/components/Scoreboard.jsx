@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import {
   Table,
   TableRow,
@@ -12,9 +14,13 @@ import { Modal } from "../_ds";
 import { useAppContext } from "../ContextWrapper";
 
 const Scoreboard = ({ isOpen, onClose }) => {
-  const { teams } = useAppContext();
+  const { teams, isAdmin, teamId } = useAppContext();
 
   const max = Math.max(...teams.map((t) => t.points));
+  const calculateRowStyles = useCallback(
+    (team) => (!isAdmin && team.id === teamId ? { border: "2px solid" } : {}),
+    [isAdmin, teamId]
+  );
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Typography variant="h3" gutterBottom>
@@ -31,7 +37,7 @@ const Scoreboard = ({ isOpen, onClose }) => {
           {[...teams]
             .sort((a, b) => b.points - a.points)
             .map((t) => (
-              <TableRow key={t.id}>
+              <TableRow key={t.id} sx={calculateRowStyles(t)}>
                 <Typography
                   component={TableCell}
                   sx={{ fontWeight: t.points === max ? "bold" : "normal" }}

@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   Button,
   Card,
@@ -31,6 +33,7 @@ const App = () => {
     setQuestions,
     teams,
     setTeams,
+    teamId,
     setLocalTeamId,
   } = useAppContext();
 
@@ -87,6 +90,16 @@ const App = () => {
 
   useWebSocketCallback(webSocketEventCallbacks);
 
+  const teamName = useMemo(
+    () => teams.find((t) => t.id === teamId)?.name,
+    [teams, teamId]
+  );
+
+  const gameCode = useMemo(
+    () => recentGames.find(({ _id }) => _id === gameId)?.code || "N/A",
+    [recentGames, gameId]
+  );
+
   return (
     <>
       <Card className="app-card" raised>
@@ -94,13 +107,6 @@ const App = () => {
           Let's Get Trivial
         </Typography>
         <div className="app-card-menu">
-          <Typography>
-            Game code:{" "}
-            {recentGames.find(({ _id }) => _id === gameId)?.code || "N/A"}
-          </Typography>
-          <Button variant="outlined" onClick={openMenu}>
-            Main menu
-          </Button>
           {isAdmin && (
             <div className="app-card-controls">
               <FormControlLabel
@@ -122,6 +128,13 @@ const App = () => {
                 Reset game
               </Button>
             </div>
+          )}
+          {!isAdmin && gameId && <Typography>Welcome, {teamName}!</Typography>}
+          <Typography>Game code: {gameCode}</Typography>
+          {gameId && (
+            <Button variant="outlined" onClick={openMenu}>
+              Main menu
+            </Button>
           )}
         </div>
       </Card>
