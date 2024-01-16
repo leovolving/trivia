@@ -67,7 +67,6 @@ const ContextWrapper = ({ children }) => {
       webSocket.current = socket;
       // fetch game on load if one is already started
       if (gameId !== "null" && gameId !== null) {
-        console.log({ recentGames, gameId });
         const game = recentGames.find((g) => g.id === gameId);
         setLocalTeamId(game.teamId || null);
         openGame(gameId, false, game.isAdmin);
