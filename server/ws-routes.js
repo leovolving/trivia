@@ -97,6 +97,7 @@ const wsRoutes = {
         gameId,
         categoryLabel,
         categoryId,
+        correct,
         isNewCategory,
         points,
         answers,
@@ -109,7 +110,7 @@ const wsRoutes = {
         newCategory = g.categories.slice(-1)[0];
         category = newCategory._id;
       } else category = categoryId;
-      const questionData = { points, answers, question, category };
+      const questionData = { points, answers, question, category, correct };
       const game = await addOrEditQuestion(questionData, gameId, questionId);
       return {
         newCategory,

@@ -29,6 +29,9 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     currentOrDefault("points", INITIAL_POINTS)
   );
   const [answers, setAnswers] = useState(currentOrDefault("answers", []));
+  const [correctAnswer, setCorrectAnswer] = useState(
+    currentOrDefault("correct", null)
+  );
 
   const clearInputs = () => {
     setCategory(null);
@@ -38,7 +41,7 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
     setAnswers([]);
   };
 
-  const onAutocompleteChange = (_, value, reason) => {
+  const onCategoryChange = (_, value, reason) => {
     switch (reason) {
       case "clear":
       case "reset":
@@ -56,6 +59,10 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
       default:
       // do nothing for blur
     }
+  };
+
+  const onCorrectAnswerChange = (_, val) => {
+    setCorrectAnswer(answers.indexOf(val));
   };
 
   const getOrCreateCategory = () => {
@@ -79,15 +86,21 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
   const fetchQuestion = async () => {
     setLoading(true);
     const categoryId = await getOrCreateCategory();
+    // TODO: ensure there are no duplicate answer options
+    const filteredAnswers = answers.filter(Boolean);
+    // TODO: handle error if correctAnswerString is empty string
+    const correctAnswerString = answers[correctAnswer];
+    const correct = filteredAnswers.indexOf(correctAnswerString);
     const wsData = {
       gameId,
       categoryLabel: inputCategory,
       categoryId,
       isNewCategory: !categoryId,
       points: +points,
-      answers: answers.filter(Boolean),
+      answers: filteredAnswers,
       question,
       questionId: editingQuestion?.id,
+      correct,
     };
     sendWebSocketMessage(MESSAGE_TYPES.CLIENT_QUESTION_FORM, wsData);
     setLoading(false);
@@ -112,9 +125,9 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
             renderInput={(params) => (
               <TextField size="small" {...params} required />
             )}
-            onChange={onAutocompleteChange}
+            onChange={onCategoryChange}
             inputValue={inputCategory}
-            onInputChange={onAutocompleteChange}
+            onInputChange={onCategoryChange}
             value={category}
             sx={{ marginBottom: "25px" }}
           />
@@ -159,6 +172,30 @@ const AdminQuestionFormModal = ({ isOpen, onClose, editingQuestion }) => {
             value={""}
             label={`option ${answers.length + 1}`}
             sx={{ marginRight: "16px", marginBottom: "16px" }}
+          />
+        </div>
+
+        <div>
+          <h3>Correct answer</h3>
+          <Autocomplete
+            options={answers}
+            value={answers[correctAnswer] || null}
+            onChange={onCorrectAnswerChange}
+            renderInput={(params) => <TextField {...params} />}
+            ListboxProps={{ style: { maxHeight: 100 } }}
+            disableClearable
+            componentsProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: "flip",
+                    options: {
+                      fallbackPlacements: [],
+                    },
+                  },
+                ],
+              },
+            }}
           />
         </div>
 

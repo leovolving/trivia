@@ -18,6 +18,7 @@ const addOrEditQuestion = async (q, gameId, questionId) => {
           "questions.$.answers": q.answers,
           "questions.$.points": q.points,
           "questions.$.category": q.category,
+          "questions.$.correct": q.correct,
         },
       },
       { new: true }

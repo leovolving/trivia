@@ -25,3 +25,5 @@ export const useStorageState = (initialState, formKey) => {
 
 // TODO: transform from the server
 export const transformId = (obj) => ({ ...obj, id: obj._id });
+
+export const getLetter = (num) => String.fromCharCode(num + 97);

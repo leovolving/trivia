@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import { useAppContext } from "../ContextWrapper";
+import { getLetter } from "../utils";
 
 const GameQuestionModalTeamForm = ({ addTeamPoints, question }) => {
   const { teamId } = useAppContext();
@@ -24,7 +25,7 @@ const GameQuestionModalTeamForm = ({ addTeamPoints, question }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (selection === question.correct) {
+    if (+selection === question.correct) {
       addTeamPoints(teamId);
       setAnswerFeedback("Yay! You got it!");
     } else {
@@ -42,7 +43,11 @@ const GameQuestionModalTeamForm = ({ addTeamPoints, question }) => {
           onChange={onChange}
         >
           {question.answers.map((a, i) => (
-            <FormControlLabel value={i} control={<Radio />} label={a} />
+            <FormControlLabel
+              value={i}
+              control={<Radio />}
+              label={`${getLetter(i)}. ${a}`}
+            />
           ))}
         </RadioGroup>
       </FormControl>

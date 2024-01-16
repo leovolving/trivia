@@ -13,6 +13,7 @@ import {
 import { AdminQuestionFormModal } from ".";
 import { MESSAGE_TYPES } from "../constants";
 import { useAppContext } from "../ContextWrapper";
+import { getLetter } from "../utils";
 
 const AdminTable = () => {
   const { questions, categories, gameId, sendWebSocketMessage } =
@@ -61,6 +62,7 @@ const AdminTable = () => {
               <TableCell>Category</TableCell>
               <TableCell>Question</TableCell>
               <TableCell>Options</TableCell>
+              <TableCell>Correct</TableCell>
               <TableCell>Points</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -88,6 +90,9 @@ const AdminTable = () => {
                     ) : (
                       <i>N/A</i>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    {getLetter(q.correct)}. {q.answers[q.correct]}
                   </TableCell>
                   <TableCell>{q.points}</TableCell>
                   <TableCell>
